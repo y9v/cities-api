@@ -37,6 +37,24 @@ func (cityNames *CityNames) Limit(max int) {
 	}
 }
 
+func appendIfMissing(slice CityNames, i *CityName) CityNames {
+	for _, el := range slice {
+		if el.CityId == i.CityId {
+			return slice
+		}
+	}
+	return append(slice, *i)
+}
+
+func (cityNames *CityNames) Uniq() {
+	var uniqCityNames CityNames
+	for _, cityName := range *cityNames {
+		uniqCityNames = appendIfMissing(uniqCityNames, &cityName)
+	}
+
+	*cityNames = uniqCityNames
+}
+
 func cityNameFromString(key string, cityNameString string) *CityName {
 	cityNameData := strings.Split(cityNameString, "\t")
 	population, _ := strconv.ParseInt(cityNameData[2], 0, 64)
@@ -75,6 +93,7 @@ func SearchCityNames(query string, limit int) (*CityNames, error) {
 		return nil
 	})
 
+	cityNames.Uniq()
 	sort.Sort(cityNames)
 	cityNames.Limit(limit)
 
