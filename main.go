@@ -19,5 +19,5 @@ func init() {
 	fmt.Println("* Connecting to the database...")
 	InitDBSession()
 
-	go ParseCitiesFile()
+	go ParseCities()
 }

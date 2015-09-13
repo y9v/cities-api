@@ -13,6 +13,7 @@ type CityName struct {
 	Key        string
 	Name       string
 	CityId     string
+	Locale     string
 	Population uint32
 }
 
@@ -22,7 +23,18 @@ func (slice CityNames) Len() int {
 	return len(slice)
 }
 func (slice CityNames) Less(i, j int) bool {
-	return slice[i].Population > slice[j].Population
+	if slice[i].Population == slice[j].Population {
+		for _, locale := range configuration.Locales {
+			if slice[i].Locale == locale {
+				return true
+			} else if slice[j].Locale == locale {
+				return false
+			}
+		}
+		return false
+	} else {
+		return slice[i].Population > slice[j].Population
+	}
 }
 func (slice CityNames) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
@@ -37,7 +49,7 @@ func (cityNames *CityNames) Limit(max int) {
 	}
 }
 
-func appendIfMissing(slice CityNames, i *CityName) CityNames {
+func appendCityName(slice CityNames, i *CityName) CityNames {
 	for _, el := range slice {
 		if el.CityId == i.CityId {
 			return slice
@@ -49,7 +61,7 @@ func appendIfMissing(slice CityNames, i *CityName) CityNames {
 func (cityNames *CityNames) Uniq() {
 	var uniqCityNames CityNames
 	for _, cityName := range *cityNames {
-		uniqCityNames = appendIfMissing(uniqCityNames, &cityName)
+		uniqCityNames = appendCityName(uniqCityNames, &cityName)
 	}
 
 	*cityNames = uniqCityNames
@@ -57,12 +69,13 @@ func (cityNames *CityNames) Uniq() {
 
 func cityNameFromString(key string, cityNameString string) *CityName {
 	cityNameData := strings.Split(cityNameString, "\t")
-	population, _ := strconv.ParseInt(cityNameData[2], 0, 64)
+	population, _ := strconv.ParseInt(cityNameData[3], 0, 64)
 
 	return &CityName{
 		Key:        key,
 		Name:       cityNameData[0],
 		CityId:     cityNameData[1],
+		Locale:     cityNameData[2],
 		Population: uint32(population),
 	}
 }
@@ -93,8 +106,8 @@ func SearchCityNames(query string, limit int) (*CityNames, error) {
 		return nil
 	})
 
-	cityNames.Uniq()
 	sort.Sort(cityNames)
+	cityNames.Uniq()
 	cityNames.Limit(limit)
 
 	return &cityNames, err
