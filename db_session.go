@@ -13,7 +13,7 @@ func InitDBSession() {
 
 	db, err = bolt.Open("cities.db", 0600, nil)
 	if err != nil {
-		fmt.Println("* [DB] Couldn't connect to the database:", err.Error())
+		fmt.Println("[DB] Couldn't connect to the database:", err.Error())
 		os.Exit(1)
 	}
 }

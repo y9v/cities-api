@@ -67,12 +67,13 @@ func SearchCitiesByCityName(query string, limit int) (*Cities, error) {
 	return &cities, err
 }
 
-func CreateCitiesSchema() {
+func CreateCitiesBucket() {
 	db.Update(func(tx *bolt.Tx) error {
-		fmt.Println("* [DB] Creating bucket \"cities\"...")
-		_, err := tx.CreateBucket([]byte(citiesBucketName))
+		fmt.Println("[DB] Creating bucket \"cities\"...")
+		tx.DeleteBucket(citiesBucketName)
+		_, err := tx.CreateBucket(citiesBucketName)
 		if err != nil {
-			return fmt.Errorf("* [DB] Error: %s", err)
+			return fmt.Errorf("[DB] Error: %s", err)
 		}
 		return nil
 	})

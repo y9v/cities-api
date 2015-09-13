@@ -12,20 +12,27 @@ import (
 func ParseCities() {
 	file, err := os.Open(configuration.CitiesFile)
 	if err != nil {
-		fmt.Println("* [PARSER] Error opening cities file:", err)
+		fmt.Println("[PARSER] Error opening cities file:", err)
 		os.Exit(1)
 	}
 	defer file.Close()
 
+	if GetAppStatus().IsOK() {
+		fmt.Println("[PARSER] Skipping, already done")
+		return
+	}
+
 	reader := bufio.NewReader(file)
 	scanner := bufio.NewScanner(reader)
 
-	CreateCitiesSchema()
-	CreateCityNamesSchema()
+	CreateCitiesBucket()
+	CreateCityNamesBucket()
+	CreateStatsBucket()
 
 	startTime := time.Now()
-	fmt.Println("* [PARSER] Started cities parsing")
+	fmt.Println("[PARSER] Started cities parsing")
 
+	citiesCount := 0
 	err = db.Batch(func(tx *bolt.Tx) error {
 		citiesBucket := tx.Bucket(citiesBucketName)
 		cityNamesBucket := tx.Bucket(cityNamesBucketName)
@@ -45,17 +52,22 @@ func ParseCities() {
 			if err != nil {
 				return err
 			}
+
+			citiesCount++
 		}
 
 		return err
 	})
 
-	ParseAlternateNames()
+	fmt.Printf("[PARSER] Added %d cities\n", citiesCount)
+	cityNamesCount := ParseAlternateNames()
+	fmt.Printf("[PARSER] Added %d city names\n", citiesCount+cityNamesCount)
+	SaveStats(citiesCount, citiesCount+cityNamesCount)
 
 	if err != nil {
-		fmt.Println("* [PARSER] Error:", err)
+		fmt.Println("[PARSER] Error:", err)
 	} else {
-		fmt.Printf("* [PARSER] Parsing done (in %s)\n", time.Since(startTime))
+		fmt.Printf("[PARSER] Parsing done (in %s)\n", time.Since(startTime))
 	}
 }
 

@@ -5,6 +5,11 @@ import (
 	"strings"
 )
 
+func applicationStatusEndpoint(c *gin.Context) {
+	appStatus := GetAppStatus()
+	c.JSON(200, appStatus)
+}
+
 func cityEndpoint(c *gin.Context) {
 	city, err := FindCity(c.Param("id"))
 

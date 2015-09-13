@@ -8,18 +8,19 @@ import (
 	"strings"
 )
 
-func ParseAlternateNames() {
+func ParseAlternateNames() int {
 	file, err := os.Open(configuration.AlternateNamesFile)
 	if err != nil {
-		fmt.Println("* [PARSER] Error opening alternate names file:", err)
+		fmt.Println("[PARSER] Error opening alternate names file:", err)
 	}
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
 	scanner := bufio.NewScanner(reader)
 
-	fmt.Println("* [PARSER] Started alternate names parsing")
+	fmt.Println("[PARSER] Started alternate names parsing")
 
+	cityNamesCount := 0
 	err = db.Batch(func(tx *bolt.Tx) error {
 		cityNamesBucket := tx.Bucket(cityNamesBucketName)
 
@@ -39,6 +40,8 @@ func ParseAlternateNames() {
 					if err != nil {
 						return err
 					}
+
+					cityNamesCount++
 				}
 			}
 		}
@@ -47,8 +50,10 @@ func ParseAlternateNames() {
 	})
 
 	if err != nil {
-		fmt.Println("* [PARSER] Error:", err)
+		fmt.Println("[PARSER] Error:", err)
 	}
+
+	return cityNamesCount
 }
 
 func addCityToIndex(

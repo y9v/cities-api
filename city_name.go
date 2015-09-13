@@ -80,17 +80,6 @@ func cityNameFromString(key string, cityNameString string) *CityName {
 	}
 }
 
-func CreateCityNamesSchema() {
-	db.Update(func(tx *bolt.Tx) error {
-		fmt.Println("* [DB] Creating bucket \"city_names\"...")
-		_, err := tx.CreateBucket([]byte(cityNamesBucketName))
-		if err != nil {
-			return fmt.Errorf("* [DB] Error: %s", err)
-		}
-		return nil
-	})
-}
-
 func SearchCityNames(query string, limit int) (*CityNames, error) {
 	var cityNames CityNames
 
@@ -111,4 +100,16 @@ func SearchCityNames(query string, limit int) (*CityNames, error) {
 	cityNames.Limit(limit)
 
 	return &cityNames, err
+}
+
+func CreateCityNamesBucket() {
+	db.Update(func(tx *bolt.Tx) error {
+		fmt.Println("[DB] Creating bucket \"city_names\"...")
+		tx.DeleteBucket(cityNamesBucketName)
+		_, err := tx.CreateBucket(cityNamesBucketName)
+		if err != nil {
+			return fmt.Errorf("[DB] Error: %s", err)
+		}
+		return nil
+	})
 }
