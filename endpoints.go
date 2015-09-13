@@ -18,12 +18,17 @@ func cityEndpoint(c *gin.Context) {
 }
 
 func searchCitiesEndpoint(c *gin.Context) {
-	query := strings.Replace(strings.ToLower(c.Query("q")), "|", "", -1)
-	cities, err := SearchCitiesByCityName(query, 5)
+	query := strings.Trim(strings.ToLower(c.Query("q")), "| ")
 
-	if err != nil {
-		c.JSON(500, nil)
+	if query == "" {
+		c.JSON(200, nil)
 	} else {
-		c.JSON(200, cities)
+		cities, err := SearchCitiesByCityName(query, 5)
+
+		if err != nil {
+			c.JSON(500, nil)
+		} else {
+			c.JSON(200, cities)
+		}
 	}
 }

@@ -6,6 +6,7 @@ import (
 
 func newRouter() *gin.Engine {
 	router := gin.Default()
+	router.Use(HeadersMiddleware())
 
 	v1 := router.Group("/1.0")
 	{

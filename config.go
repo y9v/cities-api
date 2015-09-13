@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type Configuration struct {
 	Port               string
 	Timeout            int
 	CORSOrigins        []string
+	CORSHeader         string
 	Locales            []string
 	CitiesFile         string
 	AlternateNamesFile string
@@ -43,4 +45,6 @@ func LoadConfiguration(configuration *Configuration) {
 	if envPort := os.Getenv("PORT"); len(envPort) > 0 {
 		configuration.Port = envPort
 	}
+
+	configuration.CORSHeader = strings.Join(configuration.CORSOrigins, ",")
 }
