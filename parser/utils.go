@@ -3,7 +3,6 @@ package parser
 import (
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
-	"strings"
 )
 
 func prepareCityBytes(cityData []string) []byte {
@@ -16,7 +15,7 @@ func prepareCityBytes(cityData []string) []byte {
 func addCityToIndex(
 	bucket *bolt.Bucket, id string, name string, locale string, population string,
 ) error {
-	cityNameKey := []byte(strings.ToLower(name))
+	cityNameKey := []byte(ds.PrepareCityNameKey(name))
 
 	if conflict := bucket.Get(cityNameKey); conflict != nil {
 		cityName := ds.CityNameFromString(string(cityNameKey), string(conflict))

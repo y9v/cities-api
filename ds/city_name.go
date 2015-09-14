@@ -43,6 +43,14 @@ func (cityNames CityNames) Uniq() {
 	cityNames = uniqCityNames
 }
 
+func PrepareCityNameKey(key string) string {
+	for _, s := range []string{" ", "|", "-"} {
+		key = strings.Replace(key, s, "", -1)
+	}
+
+	return strings.ToLower(key)
+}
+
 func CityNameFromString(key string, cityNameString string) *CityName {
 	cityNameData := strings.Split(cityNameString, "\t")
 	population, _ := strconv.ParseInt(cityNameData[3], 0, 64)
@@ -64,7 +72,7 @@ func SearchCityNames(
 	err := db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket(CityNamesBucketName).Cursor()
 
-		prefix := []byte(query)
+		prefix := []byte(PrepareCityNameKey(query))
 		for k, v := c.Seek(prefix); bytes.HasPrefix(k, prefix); k, v = c.Next() {
 			cityName := CityNameFromString(string(k), string(v))
 			cityNames = append(cityNames, cityName)

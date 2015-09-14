@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lebedev-yury/cities/ds"
-	"strings"
 )
 
 func applicationStatusEndpoint(c *gin.Context) {
@@ -24,7 +23,7 @@ func cityEndpoint(c *gin.Context) {
 }
 
 func searchCitiesEndpoint(c *gin.Context) {
-	query := strings.Trim(strings.ToLower(c.Query("q")), "| ")
+	query := c.Query("q")
 
 	if query == "" {
 		c.JSON(200, nil)
