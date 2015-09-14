@@ -10,14 +10,14 @@ dump), as well as all official names.
 
 ## Configuration
 
-| Option             | Description                               |
-|--------------------|-------------------------------------------|
-| Port               | On which port the server is running       |
-| Timeout            | Server timeout, in seconds                |
-| CORSOrigins        | The list of CORS origins                  |
-| Locales            | The list of locales to support            |
-| CitiesFile         | Full filename of the cities dump          |
-| AlternateNamesFile | Full filename to the alternate names dump |
+| Option             | Description                               | Default            |
+|--------------------|-------------------------------------------|--------------------|
+| Port               | On which port the server is running       | 8080               |
+| Timeout            | Server timeout, in seconds                | 5                  |
+| CORSOrigins        | The list of CORS origins                  | http://localhost   |
+| Locales            | The list of locales to support            | en                 |
+| CitiesFile         | Full filename of the cities dump          | data/cities.txt    |
+| AlternateNamesFile | Full filename to the alternate names dump | data/alternate.txt |
 
 ## Running
 

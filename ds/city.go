@@ -1,7 +1,6 @@
-package main
+package ds
 
 import (
-	"fmt"
 	"github.com/boltdb/bolt"
 	"strings"
 )
@@ -17,10 +16,8 @@ type City struct {
 }
 
 type Cities struct {
-	Cities []City `json:"cities,omitempty"`
+	Cities []*City `json:"cities,omitempty"`
 }
-
-var citiesBucketName = []byte("cities")
 
 func cityFromString(id string, cityString string) *City {
 	cityData := strings.Split(cityString, "\t")
@@ -36,11 +33,11 @@ func cityFromString(id string, cityString string) *City {
 	}
 }
 
-func FindCity(id string) (*City, error) {
+func FindCity(db *bolt.DB, id string) (*City, error) {
 	var city *City = nil
 
 	err := db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(citiesBucketName)
+		bucket := tx.Bucket(CitiesBucketName)
 		val := bucket.Get([]byte(id))
 
 		if val != nil {
@@ -52,29 +49,19 @@ func FindCity(id string) (*City, error) {
 	return city, err
 }
 
-func SearchCitiesByCityName(query string, limit int) (*Cities, error) {
+func SearchCitiesByCityName(
+	db *bolt.DB, locales []string, query string, limit int,
+) (*Cities, error) {
 	var cities Cities
 
-	cityNames, err := SearchCityNames(query, limit)
+	cityNames, err := SearchCityNames(db, locales, query, limit)
 
 	var city *City
 	for _, cityName := range *cityNames {
-		city, err = FindCity(cityName.CityId)
+		city, err = FindCity(db, cityName.CityId)
 		city.Name = cityName.Name
-		cities.Cities = append(cities.Cities, *city)
+		cities.Cities = append(cities.Cities, city)
 	}
 
 	return &cities, err
-}
-
-func CreateCitiesBucket() {
-	db.Update(func(tx *bolt.Tx) error {
-		fmt.Println("[DB] Creating bucket \"cities\"...")
-		tx.DeleteBucket(citiesBucketName)
-		_, err := tx.CreateBucket(citiesBucketName)
-		if err != nil {
-			return fmt.Errorf("[DB] Error: %s", err)
-		}
-		return nil
-	})
 }

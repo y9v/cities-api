@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/lebedev-yury/cities/ds"
 	"strings"
 )
 
@@ -11,7 +12,7 @@ func applicationStatusEndpoint(c *gin.Context) {
 }
 
 func cityEndpoint(c *gin.Context) {
-	city, err := FindCity(c.Param("id"))
+	city, err := ds.FindCity(db, c.Param("id"))
 
 	if err != nil {
 		c.JSON(500, nil)
@@ -28,7 +29,7 @@ func searchCitiesEndpoint(c *gin.Context) {
 	if query == "" {
 		c.JSON(200, nil)
 	} else {
-		cities, err := SearchCitiesByCityName(query, 5)
+		cities, err := ds.SearchCitiesByCityName(db, options.Locales, query, 5)
 
 		if err != nil {
 			c.JSON(500, nil)

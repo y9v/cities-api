@@ -7,10 +7,10 @@ import (
 
 func Server() *http.Server {
 	return &http.Server{
-		Addr:           ":" + configuration.Port,
+		Addr:           ":" + options.Port,
 		Handler:        newRouter(),
-		ReadTimeout:    time.Duration(configuration.Timeout) * time.Second,
-		WriteTimeout:   time.Duration(configuration.Timeout) * time.Second,
+		ReadTimeout:    time.Duration(options.Timeout) * time.Second,
+		WriteTimeout:   time.Duration(options.Timeout) * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 }
