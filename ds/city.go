@@ -19,18 +19,30 @@ type Cities struct {
 	Cities []*City `json:"cities,omitempty"`
 }
 
-func cityFromString(id string, cityString string) *City {
+func cityFromString(id string, cityString string) (*City, error) {
+	var city City
+	var err error
+
 	cityData := strings.Split(cityString, "\t")
 
-	return &City{
-		Id:          id,
-		Name:        cityData[0],
-		CountryCode: cityData[1],
-		Population:  cityData[2],
-		Latitude:    cityData[3],
-		Longitude:   cityData[4],
-		Timezone:    cityData[5],
+	if len(cityData) == 6 {
+		city.Id = id
+		city.Name = cityData[0]
+		city.CountryCode = cityData[1]
+		city.Population = cityData[2]
+		city.Latitude = cityData[3]
+		city.Longitude = cityData[4]
+		city.Timezone = cityData[5]
+	} else {
+		err = InvalidDataError{CitiesBucketName, id, cityString}
 	}
+
+	return &city, err
+}
+
+func (city *City) toString() string {
+	return city.Name + "\t" + city.CountryCode + "\t" + city.Population + "\t" +
+		city.Latitude + "\t" + city.Longitude + "\t" + city.Timezone
 }
 
 func FindCity(db *bolt.DB, id string) (*City, error) {
@@ -39,22 +51,23 @@ func FindCity(db *bolt.DB, id string) (*City, error) {
 	err := db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(CitiesBucketName)
 		val := bucket.Get([]byte(id))
+		var err error
 
 		if val != nil {
-			city = cityFromString(id, string(val))
+			city, err = cityFromString(id, string(val))
 		}
-		return nil
+		return err
 	})
 
 	return city, err
 }
 
-func SearchCitiesByCityName(
+func SearchCities(
 	db *bolt.DB, locales []string, query string, limit int,
 ) (*Cities, error) {
 	var cities Cities
 
-	cityNames, err := SearchCityNames(db, locales, query, limit)
+	cityNames, err := searchCityNames(db, locales, query, limit)
 
 	var city *City
 	for _, cityName := range *cityNames {

@@ -2,19 +2,24 @@ package main
 
 import (
 	"fmt"
+	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/config"
 	"github.com/lebedev-yury/cities/parser"
 	"log"
 )
 
-var options = config.Options{
-	Port:               "8080",
-	Timeout:            5,
-	CORSOrigins:        []string{"http://localhost"},
-	Locales:            []string{"en"},
-	CitiesFile:         "data/cities.txt",
-	AlternateNamesFile: "data/alternate.txt",
-}
+var (
+	db *bolt.DB
+
+	options = config.Options{
+		Port:               "8080",
+		Timeout:            5,
+		CORSOrigins:        []string{"http://localhost"},
+		Locales:            []string{"en"},
+		CitiesFile:         "data/cities.txt",
+		AlternateNamesFile: "data/alternate.txt",
+	}
+)
 
 func main() {
 	fmt.Printf("* Listening on port %s\n\n", options.Port)
@@ -27,7 +32,7 @@ func init() {
 	config.Load(&options, "config.json")
 
 	fmt.Println("* Connecting to the database...")
-	InitDBSession()
+	InitDBSession(db)
 
 	if GetAppStatus().IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")

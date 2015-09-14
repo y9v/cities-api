@@ -6,9 +6,7 @@ import (
 	"os"
 )
 
-var db *bolt.DB
-
-func InitDBSession() {
+func InitDBSession(db *bolt.DB) {
 	var err error
 
 	db, err = bolt.Open("cities.db", 0600, nil)

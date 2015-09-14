@@ -1,6 +1,6 @@
 package ds
 
-type CityNameComparator struct {
+type CityNamesComparator struct {
 	CityNames
 	Locales []string
 }
@@ -13,7 +13,7 @@ func (slice CityNames) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func (slice CityNameComparator) Less(i, j int) bool {
+func (slice CityNamesComparator) Less(i, j int) bool {
 	if slice.CityNames[i].Population == slice.CityNames[j].Population {
 		for _, locale := range slice.Locales {
 			if slice.CityNames[i].Locale == locale {

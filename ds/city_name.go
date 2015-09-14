@@ -1,9 +1,6 @@
 package ds
 
 import (
-	"bytes"
-	"github.com/boltdb/bolt"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -16,31 +13,9 @@ type CityName struct {
 	Population uint32
 }
 
-type CityNames []*CityName
-
-func (cityNames *CityNames) Limit(max int) {
-	if len(*cityNames) > max {
-		limitedCityNames := *cityNames
-		*cityNames = limitedCityNames[:max]
-	}
-}
-
-func appendCityName(slice CityNames, i *CityName) CityNames {
-	for _, el := range slice {
-		if el.CityId == i.CityId {
-			return slice
-		}
-	}
-	return append(slice, i)
-}
-
-func (cityNames CityNames) Uniq() {
-	var uniqCityNames CityNames
-	for _, cityName := range cityNames {
-		uniqCityNames = appendCityName(uniqCityNames, cityName)
-	}
-
-	cityNames = uniqCityNames
+func (cityName *CityName) toString() string {
+	return cityName.Name + "\t" + cityName.CityId + "\t" +
+		cityName.Locale + "\t" + strconv.Itoa(int(cityName.Population))
 }
 
 func PrepareCityNameKey(key string) string {
@@ -51,39 +26,24 @@ func PrepareCityNameKey(key string) string {
 	return strings.ToLower(key)
 }
 
-func CityNameFromString(key string, cityNameString string) *CityName {
+func CityNameFromString(key string, cityNameString string) (*CityName, error) {
+	var cityName CityName
+	var err error
+
 	cityNameData := strings.Split(cityNameString, "\t")
-	population, _ := strconv.ParseInt(cityNameData[3], 0, 64)
 
-	return &CityName{
-		Key:        key,
-		Name:       cityNameData[0],
-		CityId:     cityNameData[1],
-		Locale:     cityNameData[2],
-		Population: uint32(population),
+	if len(cityNameData) == 4 {
+		var population int64
+		population, err = strconv.ParseInt(cityNameData[3], 0, 64)
+
+		cityName.Key = key
+		cityName.Name = cityNameData[0]
+		cityName.CityId = cityNameData[1]
+		cityName.Locale = cityNameData[2]
+		cityName.Population = uint32(population)
+	} else {
+		err = InvalidDataError{CityNamesBucketName, key, cityNameString}
 	}
-}
 
-func SearchCityNames(
-	db *bolt.DB, locales []string, query string, limit int,
-) (*CityNames, error) {
-	var cityNames CityNames
-
-	err := db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket(CityNamesBucketName).Cursor()
-
-		prefix := []byte(PrepareCityNameKey(query))
-		for k, v := c.Seek(prefix); bytes.HasPrefix(k, prefix); k, v = c.Next() {
-			cityName := CityNameFromString(string(k), string(v))
-			cityNames = append(cityNames, cityName)
-		}
-
-		return nil
-	})
-
-	sort.Sort(CityNameComparator{cityNames, locales})
-	cityNames.Uniq()
-	cityNames.Limit(limit)
-
-	return &cityNames, err
+	return &cityName, err
 }

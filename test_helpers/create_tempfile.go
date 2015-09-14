@@ -9,7 +9,7 @@ import (
 func CreateTempfile(data string, t *testing.T) string {
 	dir := os.TempDir()
 
-	f, err := ioutil.TempFile(dir, "config")
+	f, err := ioutil.TempFile(dir, "test")
 	if err != nil {
 		t.Fatalf("Tempfile %s: %v", f.Name(), err)
 	}

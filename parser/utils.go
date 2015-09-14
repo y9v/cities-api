@@ -15,18 +15,22 @@ func prepareCityBytes(cityData []string) []byte {
 func addCityToIndex(
 	bucket *bolt.Bucket, id string, name string, locale string, population string,
 ) error {
-	cityNameKey := []byte(ds.PrepareCityNameKey(name))
+	var err error
+	var cityName *ds.CityName
 
+	cityNameKey := []byte(ds.PrepareCityNameKey(name))
 	if conflict := bucket.Get(cityNameKey); conflict != nil {
-		cityName := ds.CityNameFromString(string(cityNameKey), string(conflict))
+		cityName, err = ds.CityNameFromString(string(cityNameKey), string(conflict))
 		if cityName.CityId != id {
 			cityNameKey = []byte(string(cityNameKey) + "|" + id)
 		}
 	}
 
-	return bucket.Put(
+	err = bucket.Put(
 		cityNameKey, []byte(name+"\t"+id+"\t"+locale+"\t"+population),
 	)
+
+	return err
 }
 
 func isSupportedLocale(locale string, locales []string) bool {

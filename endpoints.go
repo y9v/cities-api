@@ -28,7 +28,7 @@ func searchCitiesEndpoint(c *gin.Context) {
 	if query == "" {
 		c.JSON(200, nil)
 	} else {
-		cities, err := ds.SearchCitiesByCityName(db, options.Locales, query, 5)
+		cities, err := ds.SearchCities(db, options.Locales, query, 5)
 
 		if err != nil {
 			c.JSON(500, nil)
