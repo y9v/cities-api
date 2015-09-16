@@ -33,6 +33,7 @@ func TestOptions(t *testing.T) {
 
 		Convey("When config file exists", func() {
 			filename := h.CreateTempfile(
+				t,
 				`{
 					 "Port": "3000",
 					 "Timeout": 20,
@@ -40,7 +41,7 @@ func TestOptions(t *testing.T) {
 					 "Locales": ["ru", "uk", "en"],
 					 "CitiesFile": "files/cities.txt",
 					 "AlternateNamesFile": "files/alternate.txt"
-				 }`, t,
+				 }`,
 			)
 
 			Load(&options, filename)
@@ -59,12 +60,12 @@ func TestOptions(t *testing.T) {
 		})
 
 		Convey("Panics when config file has wrong format", func() {
-			filename := h.CreateTempfile(`"Port":}`, t)
+			filename := h.CreateTempfile(t, `"Port":}`)
 			So(func() { Load(&options, filename) }, ShouldPanic)
 		})
 
 		Convey("When the CONFIG env variable is set", func() {
-			filename := h.CreateTempfile(`{"Port": "3001"}`, t)
+			filename := h.CreateTempfile(t, `{"Port": "3001"}`)
 			os.Setenv("CONFIG", filename)
 			Load(&options, "foo.json")
 

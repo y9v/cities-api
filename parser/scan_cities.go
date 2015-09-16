@@ -28,9 +28,16 @@ func scanCities(db *bolt.DB, filename string) (int, error) {
 			cityData := strings.Split(scanner.Text(), "\t")
 			id := []byte(cityData[0])
 
-			err = citiesBucket.Put(id, prepareCityBytes(cityData))
+			cityBytes, err := prepareCityBytes(cityData)
 			if err != nil {
 				return err
+				break
+			}
+
+			err = citiesBucket.Put(id, cityBytes)
+			if err != nil {
+				return err
+				break
 			}
 
 			err = addCityToIndex(
@@ -38,6 +45,7 @@ func scanCities(db *bolt.DB, filename string) (int, error) {
 			)
 			if err != nil {
 				return err
+				break
 			}
 
 			citiesCount++

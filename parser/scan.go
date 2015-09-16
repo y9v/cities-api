@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
-	"os"
 	"time"
 )
 
@@ -18,17 +17,16 @@ func Scan(
 	ds.CreateStatisticsBucket(db)
 
 	fmt.Println("[PARSER] Started cities parsing")
-	citiesCount, err := scanCities(db, citiesFile)
-
 	var cityNamesCount int
+
+	citiesCount, err := scanCities(db, citiesFile)
 	if err == nil {
 		fmt.Println("[PARSER] Started alternate names parsing")
 		cityNamesCount, err = scanAlternateNames(db, alternateNamesFile, locales)
 	}
 
 	if err != nil {
-		fmt.Println("[PARSER] Error:", err)
-		os.Exit(1)
+		panic(fmt.Sprintf("[PARSER] Error:", err))
 	} else {
 		ds.Statistics{
 			CitiesCount:    citiesCount,

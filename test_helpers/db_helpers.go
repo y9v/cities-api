@@ -6,7 +6,7 @@ import (
 )
 
 func CreateDB(t *testing.T) *bolt.DB {
-	db, err := bolt.Open(CreateTempfile("", t), 0600, nil)
+	db, err := bolt.Open(CreateTempfile(t, ""), 0600, nil)
 	if err != nil {
 		t.Fatalf("DB: %v", err)
 	}
@@ -19,6 +19,7 @@ func CreateBucket(t *testing.T, db *bolt.DB, name []byte) *bolt.Bucket {
 
 	err := db.Update(func(tx *bolt.Tx) error {
 		var err error
+		tx.DeleteBucket(name)
 		b, err = tx.CreateBucket(name)
 		return err
 	})

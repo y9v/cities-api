@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func CreateTempfile(data string, t *testing.T) string {
+func CreateTempfile(t *testing.T, data string) string {
 	dir := os.TempDir()
 
 	f, err := ioutil.TempFile(dir, "test")

@@ -1,15 +1,25 @@
 package parser
 
 import (
+	"errors"
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
 )
 
-func prepareCityBytes(cityData []string) []byte {
-	return []byte(
-		cityData[1] + "\t" + cityData[8] + "\t" + cityData[14] +
-			"\t" + cityData[4] + "\t" + cityData[5] + "\t" + cityData[17],
-	)
+func prepareCityBytes(cityData []string) ([]byte, error) {
+	var bytes []byte
+	var err error
+
+	if len(cityData) == 19 {
+		bytes = []byte(
+			cityData[1] + "\t" + cityData[8] + "\t" + cityData[14] +
+				"\t" + cityData[4] + "\t" + cityData[5] + "\t" + cityData[17],
+		)
+	} else {
+		err = errors.New("Invalid data in cities file")
+	}
+
+	return bytes, err
 }
 
 func addCityToIndex(

@@ -32,7 +32,7 @@ func init() {
 	config.Load(&options, "config.json")
 
 	fmt.Println("* Connecting to the database...")
-	InitDBSession(db)
+	InitDBSession()
 
 	if GetAppStatus().IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
