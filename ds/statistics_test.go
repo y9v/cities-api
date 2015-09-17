@@ -41,7 +41,7 @@ func TestStatistics(t *testing.T) {
 			h.PutToBucket(t, db, StatisticsBucketName, "cities_count", "5000")
 			h.PutToBucket(t, db, StatisticsBucketName, "city_names_count", "9000")
 
-			statistics := GetStatistics(db)
+			statistics, err := GetStatistics(db)
 
 			Convey("Reads the cities count from db", func() {
 				So(statistics.CitiesCount, ShouldEqual, 5000)
@@ -50,14 +50,22 @@ func TestStatistics(t *testing.T) {
 			Convey("Reads the city names count from db", func() {
 				So(statistics.CityNamesCount, ShouldEqual, 9000)
 			})
+
+			Convey("Returns no error", func() {
+				So(err, ShouldBeNil)
+			})
 		})
 
 		Convey("When the values are not in the db", func() {
-			h.DeleteFromBucket(t, db, StatisticsBucketName, "cities_count")
-			h.DeleteFromBucket(t, db, StatisticsBucketName, "city_names_count")
+			CreateStatisticsBucket(db)
 
 			Convey("Does not panic", func() {
 				So(func() { GetStatistics(db) }, ShouldNotPanic)
+			})
+
+			Convey("Returns an error", func() {
+				_, err := GetStatistics(db)
+				So(err, ShouldNotBeNil)
 			})
 		})
 	})

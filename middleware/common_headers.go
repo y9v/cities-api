@@ -1,12 +1,12 @@
-package main
+package middleware
 
 import (
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
-func HeadersMiddleware() gin.HandlerFunc {
-	corsHeader := strings.Join(options.CORSOrigins, ",")
+func CommonHeaders(corsOrigins []string) gin.HandlerFunc {
+	corsHeader := strings.Join(corsOrigins, ",")
 
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Content-Type", "application/json")

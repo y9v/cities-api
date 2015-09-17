@@ -6,7 +6,7 @@ import (
 )
 
 func applicationStatusEndpoint(c *gin.Context) {
-	appStatus := GetAppStatus()
+	appStatus := GetAppStatus(db)
 	c.JSON(200, appStatus)
 }
 

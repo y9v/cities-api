@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/lebedev-yury/cities/middleware"
 )
 
 func newRouter() *gin.Engine {
 	router := gin.Default()
-	router.Use(HeadersMiddleware())
+	router.Use(middleware.CommonHeaders(options.CORSOrigins))
 
 	v1 := router.Group("/1.0")
 	{

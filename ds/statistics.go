@@ -28,22 +28,24 @@ func (statistics Statistics) Save(db *bolt.DB) error {
 	})
 }
 
-func GetStatistics(db *bolt.DB) *Statistics {
+func GetStatistics(db *bolt.DB) (*Statistics, error) {
 	var stat Statistics
 
-	db.View(func(tx *bolt.Tx) error {
+	err := db.View(func(tx *bolt.Tx) error {
+		var err error
+
 		if bucket := tx.Bucket(StatisticsBucketName); bucket != nil {
-			stat.CitiesCount, _ = strconv.Atoi(
+			stat.CitiesCount, err = strconv.Atoi(
 				string(bucket.Get([]byte("cities_count"))),
 			)
 
-			stat.CityNamesCount, _ = strconv.Atoi(
+			stat.CityNamesCount, err = strconv.Atoi(
 				string(bucket.Get([]byte("city_names_count"))),
 			)
 		}
 
-		return nil
+		return err
 	})
 
-	return &stat
+	return &stat, err
 }

@@ -22,11 +22,6 @@ var (
 )
 
 func main() {
-	fmt.Printf("* Listening on port %s\n\n", options.Port)
-	log.Fatal(Server().ListenAndServe())
-}
-
-func init() {
 	fmt.Println("* Booting cities service...")
 	fmt.Println("* Loading configuration...")
 	config.Load(&options, "config.json")
@@ -34,7 +29,7 @@ func init() {
 	fmt.Println("* Connecting to the database...")
 	InitDBSession()
 
-	if GetAppStatus().IsIndexed() {
+	if GetAppStatus(db).IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
 		return
 	} else {
@@ -42,4 +37,7 @@ func init() {
 			db, options.Locales, options.CitiesFile, options.AlternateNamesFile,
 		)
 	}
+
+	fmt.Printf("* Listening on port %s\n\n", options.Port)
+	log.Fatal(Server().ListenAndServe())
 }

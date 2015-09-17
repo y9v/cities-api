@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
 )
 
@@ -13,14 +14,15 @@ func (appStatus *AppStatus) IsIndexed() bool {
 	return appStatus.Status == "ok"
 }
 
-func GetAppStatus() *AppStatus {
+func GetAppStatus(db *bolt.DB) *AppStatus {
+	var err error
 	var appStatus AppStatus
 
-	appStatus.Statistics = ds.GetStatistics(db)
-	if appStatus.Statistics.CitiesCount == 0 {
-		appStatus.Status = "indexing"
-	} else {
+	appStatus.Statistics, err = ds.GetStatistics(db)
+	if err == nil && appStatus.Statistics.CityNamesCount > 0 {
 		appStatus.Status = "ok"
+	} else {
+		appStatus.Status = "indexing"
 	}
 
 	return &appStatus
