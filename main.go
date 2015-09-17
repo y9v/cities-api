@@ -9,26 +9,17 @@ import (
 	"log"
 )
 
-var (
-	db *bolt.DB
-
-	options = config.Options{
-		Port:               "8080",
-		Timeout:            5,
-		CORSOrigins:        []string{"http://localhost"},
-		Locales:            []string{"en"},
-		CitiesFile:         "data/cities.txt",
-		AlternateNamesFile: "data/alternate.txt",
-	}
-)
-
 func main() {
 	fmt.Println("* Booting cities service...")
+
 	fmt.Println("* Loading configuration...")
-	config.Load(&options, "config.json")
+	options := config.Load("config.json")
 
 	fmt.Println("* Connecting to the database...")
-	InitDBSession()
+	db, err := bolt.Open("cities.db", 0600, nil)
+	if err != nil {
+		panic(fmt.Sprintf("[DB] Couldn't connect to the db:", err))
+	}
 
 	if ds.GetAppStatus(db).IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
@@ -40,5 +31,5 @@ func main() {
 	}
 
 	fmt.Printf("* Listening on port %s\n\n", options.Port)
-	log.Fatal(Server().ListenAndServe())
+	log.Fatal(Server(db, options).ListenAndServe())
 }
