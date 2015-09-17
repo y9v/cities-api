@@ -146,15 +146,20 @@ taken based on the locale priority.
 
 This project uses [gom](https://github.com/mattn/gom) dependency manager.
 
-After installing gom you need to install the dependencies:
+To install dependencies:
 
 ```
-gom -test install
+make setup
+```
+
+To get the dumpfiles:
+
+```
+make getdumpfiles
 ```
 
 Before committing:
 
 ```
-go vet ./...
-gom test -cover ./...
+make test
 ```
