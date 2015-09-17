@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/config"
+	"github.com/lebedev-yury/cities/ds"
 	"github.com/lebedev-yury/cities/parser"
 	"log"
 )
@@ -29,7 +30,7 @@ func main() {
 	fmt.Println("* Connecting to the database...")
 	InitDBSession()
 
-	if GetAppStatus(db).IsIndexed() {
+	if ds.GetAppStatus(db).IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
 		return
 	} else {

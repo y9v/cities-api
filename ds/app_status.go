@@ -1,13 +1,12 @@
-package main
+package ds
 
 import (
 	"github.com/boltdb/bolt"
-	"github.com/lebedev-yury/cities/ds"
 )
 
 type AppStatus struct {
-	Status     string         `json:"status"`
-	Statistics *ds.Statistics `json:"statistics"`
+	Status     string      `json:"status"`
+	Statistics *Statistics `json:"statistics"`
 }
 
 func (appStatus *AppStatus) IsIndexed() bool {
@@ -18,7 +17,7 @@ func GetAppStatus(db *bolt.DB) *AppStatus {
 	var err error
 	var appStatus AppStatus
 
-	appStatus.Statistics, err = ds.GetStatistics(db)
+	appStatus.Statistics, err = GetStatistics(db)
 	if err == nil && appStatus.Statistics.CityNamesCount > 0 {
 		appStatus.Status = "ok"
 	} else {

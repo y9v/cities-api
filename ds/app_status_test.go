@@ -1,7 +1,6 @@
-package main
+package ds
 
 import (
-	"github.com/lebedev-yury/cities/ds"
 	h "github.com/lebedev-yury/cities/test_helpers"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
@@ -22,11 +21,11 @@ func TestAppStatus(t *testing.T) {
 
 	Convey("Test get app status", t, func() {
 		db := h.CreateDB(t)
-		ds.CreateStatisticsBucket(db)
+		CreateStatisticsBucket(db)
 
 		Convey("When indexing is done", func() {
-			h.PutToBucket(t, db, ds.StatisticsBucketName, "cities_count", "1000")
-			h.PutToBucket(t, db, ds.StatisticsBucketName, "city_names_count", "2000")
+			h.PutToBucket(t, db, StatisticsBucketName, "cities_count", "1000")
+			h.PutToBucket(t, db, StatisticsBucketName, "city_names_count", "2000")
 
 			appStatus := GetAppStatus(db)
 
@@ -44,8 +43,8 @@ func TestAppStatus(t *testing.T) {
 		})
 
 		Convey("When still indexing", func() {
-			h.DeleteFromBucket(t, db, ds.StatisticsBucketName, "cities_count")
-			h.DeleteFromBucket(t, db, ds.StatisticsBucketName, "city_names_count")
+			h.DeleteFromBucket(t, db, StatisticsBucketName, "cities_count")
+			h.DeleteFromBucket(t, db, StatisticsBucketName, "city_names_count")
 
 			appStatus := GetAppStatus(db)
 
