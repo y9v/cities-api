@@ -1,5 +1,7 @@
 # Cities service
 
+[![Circle CI](https://circleci.com/gh/lebedev-yury/cities.svg?style=svg&circle-token=025787958f4452dd681fc6bcab3c52fe66a79598)](https://circleci.com/gh/lebedev-yury/cities)
+
 This service contains basic information about cities, and provides
 auto-suggestion based on the city names.
 
@@ -19,7 +21,7 @@ dump), as well as all official names.
 | CitiesFile         | Full filename of the cities dump          | data/cities.txt    |
 | AlternateNamesFile | Full filename to the alternate names dump | data/alternate.txt |
 
-## API endpoints
+## API
 
 #### GET application/status
 
@@ -140,13 +142,19 @@ taken based on the locale priority.
 }
 ```
 
-## Running
+## Development
 
-To run the service, you need to:
+This project uses [gom](https://github.com/mattn/gom) dependency manager.
 
-  * put the compiled binary to some directory
-  * create the `config.json` file in the same directory
-  * download cities and alternate names dump files
-  * run the binary
+After installing gom you need to install the dependencies:
 
-On the first run the service will create a database and parse the files.
+```
+gom -test install
+```
+
+Before committing:
+
+```
+go vet ./...
+gom test -cover ./...
+```

@@ -18,12 +18,11 @@ func main() {
 	fmt.Println("* Connecting to the database...")
 	db, err := bolt.Open("cities.db", 0600, nil)
 	if err != nil {
-		panic(fmt.Sprintf("[DB] Couldn't connect to the db:", err))
+		panic(fmt.Sprintf("[DB] Couldn't connect to the db: %v", err))
 	}
 
 	if ds.GetAppStatus(db).IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
-		return
 	} else {
 		go parser.Scan(
 			db, options.Locales, options.CitiesFile, options.AlternateNamesFile,

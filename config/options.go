@@ -36,7 +36,7 @@ func Load(filename string) *Options {
 	if file, err := os.Open(filename); err == nil {
 		err = json.NewDecoder(file).Decode(options)
 		if err != nil {
-			panic(fmt.Sprintf("Error parsing configuration:", err))
+			panic(fmt.Sprintf("Error parsing configuration: %v", err))
 		}
 	}
 

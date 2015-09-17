@@ -26,7 +26,7 @@ func Scan(
 	}
 
 	if err != nil {
-		panic(fmt.Sprintf("[PARSER] Error:", err))
+		panic(fmt.Sprintf("[PARSER] Error: %v", err))
 	} else {
 		ds.Statistics{
 			CitiesCount:    citiesCount,
