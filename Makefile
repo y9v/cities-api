@@ -1,8 +1,8 @@
 default: test
 
 setup:
-	go get github.com/mattn/gom
-	gom install
+	go get github.com/tools/godep
+	godep restore
 
 getdumpfiles:
 	mkdir data
@@ -15,5 +15,5 @@ getdumpfiles:
 	rm data/iso-languagecodes.txt
 
 test:
-	go vet ./...
-	gom test ./... -cover
+	godep go vet ./...
+	godep go test ./... -cover
