@@ -142,9 +142,7 @@ taken based on the locale priority.
 }
 ```
 
-## Development
-
-This project uses [gom](https://github.com/mattn/gom) dependency manager.
+## Make commands
 
 To install dependencies:
 

@@ -1,5 +1,8 @@
 {
-  "Port": "8082",
-  "Timeout": 30,
+  "Port": "8080",
+  "Timeout": 5,
+  "CORSOrigins": ["localhost"],
   "Locales": ["ru", "uk", "be", "en", "de"],
+  "CitiesFile": "data/cities1000.txt",
+  "AlternateNamesFile": "data/alternateNames.txt"
 }
