@@ -22,7 +22,7 @@ func buildDefault() *Options {
 		CORSOrigins:        []string{"http://localhost"},
 		Locales:            []string{"en"},
 		CitiesFile:         "data/cities.txt",
-		AlternateNamesFile: "data/alternate.txt",
+		AlternateNamesFile: "data/alternateNames.txt",
 	}
 }
 
