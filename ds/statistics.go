@@ -6,6 +6,7 @@ import (
 )
 
 type Statistics struct {
+	CountriesCount int `json:"countries_count"`
 	CitiesCount    int `json:"cities_count"`
 	CityNamesCount int `json:"city_names_count"`
 }
@@ -15,6 +16,11 @@ func (statistics Statistics) Save(db *bolt.DB) error {
 		bucket := tx.Bucket(StatisticsBucketName)
 
 		err := bucket.Put(
+			[]byte("countries_count"),
+			[]byte(strconv.Itoa(statistics.CountriesCount)),
+		)
+
+		err = bucket.Put(
 			[]byte("cities_count"),
 			[]byte(strconv.Itoa(statistics.CitiesCount)),
 		)
@@ -35,6 +41,10 @@ func GetStatistics(db *bolt.DB) (*Statistics, error) {
 		var err error
 
 		if bucket := tx.Bucket(StatisticsBucketName); bucket != nil {
+			stat.CountriesCount, err = strconv.Atoi(
+				string(bucket.Get([]byte("countries_count"))),
+			)
+
 			stat.CitiesCount, err = strconv.Atoi(
 				string(bucket.Get([]byte("cities_count"))),
 			)

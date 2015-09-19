@@ -12,14 +12,15 @@ dump), as well as all official names.
 
 ## Configuration
 
-| Option             | Description                               | Default            |
-|--------------------|-------------------------------------------|--------------------|
-| Port               | On which port the server is running       | 8080               |
-| Timeout            | Server timeout, in seconds                | 5                  |
-| CORSOrigins        | The list of CORS origins                  | http://localhost   |
-| Locales            | The list of locales to support            | en                 |
-| CitiesFile         | Full filename of the cities dump          | data/cities.txt    |
-| AlternateNamesFile | Full filename to the alternate names dump | data/alternate.txt |
+| Option             | Description                          | Default                 |
+|--------------------|--------------------------------------|-------------------------|
+| Port               | On which port the server is running  | 8080                    |
+| Timeout            | Server timeout, in seconds           | 5                       |
+| CORSOrigins        | The list of CORS origins             | http://localhost        |
+| Locales            | The list of locales to support       | en                      |
+| CountriesFile      | Filename to the countries dump       | data/countryInfo.txt    |
+| CitiesFile         | Filename to the cities dump          | data/cities.txt         |
+| AlternateNamesFile | Filename to the alternate names dump | data/alternateNames.txt |
 
 ## API
 
@@ -37,6 +38,7 @@ Returns the application status and basic statistics.
 {
   "status": "ok",
     "statistics": {
+    "countries_count": 250,
     "cities_count": 145314,
     "city_names_count": 224695
   }
@@ -63,11 +65,21 @@ Returns a single city by the requested ID parameter.
 {
   "id": "3164603",
   "name": "Venice",
-  "country_code": "IT",
-  "population": "51298",
+  "population": 51298,
   "latitude": "45.43713",
   "longitude": "12.33265",
-  "timezone": "Europe/Rome"
+  "timezone": "Europe/Rome",
+  "country": {
+    "code": "IT",
+    "name": "Italy",
+    "translations": {
+      "be": "Італія",
+      "de": "Italien",
+      "en": "Italy",
+      "ru": "Италия",
+      "uk": "Італія"
+    }
+  }
 }
 ```
 
@@ -94,49 +106,36 @@ taken based on the locale priority.
 {
   "cities": [
     {
-      "id": "3827407",
-      "name": "Venustiano Carranza",
-      "country_code": "MX",
-      "population": "447459",
-      "latitude": "19.44286",
-      "longitude": "-99.09724",
-      "timezone": "America/Mexico_City"
-    },
-    {
-      "id": "5405878",
-      "name": "Ventura",
-      "country_code": "US",
-      "population": "96769",
-      "latitude": "34.27834",
-      "longitude": "-119.29317",
-      "timezone": "America/Los_Angeles"
-    },
-    {
-      "id": "2745641",
-      "name": "Venlo",
-      "country_code": "NL",
-      "population": "92403",
-      "latitude": "51.37",
-      "longitude": "6.16806",
-      "timezone": "Europe/Amsterdam"
-    },
-    {
-      "id": "3833062",
-      "name": "Venado Tuerto",
-      "country_code": "AR",
-      "population": "72340",
-      "latitude": "-33.74556",
-      "longitude": "-61.96885",
-      "timezone": "America/Argentina/Cordoba"
-    },
-    {
       "id": "3164603",
       "name": "Venice",
-      "country_code": "IT",
-      "population": "51298",
+      "population": 51298,
       "latitude": "45.43713",
       "longitude": "12.33265",
       "timezone": "Europe/Rome"
+    },
+    {
+      "id": "4176380",
+      "name": "Venice, United States",
+      "population": 20748,
+      "latitude": "27.09978",
+      "longitude": "-82.45426",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "4176387",
+      "name": "Venice Gardens",
+      "population": 7104,
+      "latitude": "27.07311",
+      "longitude": "-82.4076",
+      "timezone": "America/New_York"
+    },
+    {
+      "id": "4251958",
+      "name": "Venice, United States",
+      "population": 1890,
+      "latitude": "38.67227",
+      "longitude": "-90.16983",
+      "timezone": "America/Chicago"
     }
   ]
 }

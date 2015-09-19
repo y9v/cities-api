@@ -5,6 +5,7 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -26,24 +27,18 @@ func scanCities(db *bolt.DB, filename string) (int, error) {
 
 		for scanner.Scan() {
 			cityData := strings.Split(scanner.Text(), "\t")
-			id := []byte(cityData[0])
-
 			cityBytes, err := prepareCityBytes(cityData)
 			if err != nil {
 				return err
 			}
 
-			err = citiesBucket.Put(id, cityBytes)
-			if err != nil {
-				return err
-			}
+			citiesBucket.Put([]byte(cityData[0]), cityBytes)
 
-			err = addCityToIndex(
-				cityNamesBucket, cityData[0], cityData[1], "", cityData[14],
+			population, _ := strconv.ParseInt(cityData[14], 0, 64)
+
+			addCityToIndex(
+				cityNamesBucket, cityData[0], cityData[1], "", uint32(population),
 			)
-			if err != nil {
-				return err
-			}
 
 			citiesCount++
 		}

@@ -2,17 +2,19 @@ package ds
 
 import (
 	"github.com/boltdb/bolt"
+	"strconv"
 	"strings"
 )
 
 type City struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	CountryCode string `json:"country_code"`
-	Population  string `json:"population"`
-	Latitude    string `json:"latitude"`
-	Longitude   string `json:"longitude"`
-	Timezone    string `json:"timezone"`
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	CountryCode string   `json:"-"`
+	Population  uint32   `json:"population"`
+	Latitude    string   `json:"latitude"`
+	Longitude   string   `json:"longitude"`
+	Timezone    string   `json:"timezone"`
+	Country     *Country `json:"country,omitempty"`
 }
 
 type Cities struct {
@@ -26,10 +28,13 @@ func cityFromString(id string, cityString string) (*City, error) {
 	cityData := strings.Split(cityString, "\t")
 
 	if len(cityData) == 6 {
+		var population int64
+		population, err = strconv.ParseInt(cityData[2], 0, 64)
+
 		city.Id = id
 		city.Name = cityData[0]
 		city.CountryCode = cityData[1]
-		city.Population = cityData[2]
+		city.Population = uint32(population)
 		city.Latitude = cityData[3]
 		city.Longitude = cityData[4]
 		city.Timezone = cityData[5]
@@ -41,11 +46,26 @@ func cityFromString(id string, cityString string) (*City, error) {
 }
 
 func (city *City) toString() string {
-	return city.Name + "\t" + city.CountryCode + "\t" + city.Population + "\t" +
-		city.Latitude + "\t" + city.Longitude + "\t" + city.Timezone
+	return city.Name + "\t" + city.CountryCode + "\t" +
+		strconv.Itoa(int(city.Population)) + "\t" + city.Latitude +
+		"\t" + city.Longitude + "\t" + city.Timezone
 }
 
-func FindCity(db *bolt.DB, id string) (*City, error) {
+func appendCity(db *bolt.DB, cities []*City, city *City, locale string) []*City {
+	for _, el := range cities {
+		if el.Name == city.Name {
+			if country, _ := FindCountryByCode(db, city.CountryCode); country != nil {
+				city.Name = city.Name + ", " + country.Translations[locale]
+				break
+			} else {
+				return cities
+			}
+		}
+	}
+	return append(cities, city)
+}
+
+func FindCity(db *bolt.DB, id string, includeCountry bool) (*City, error) {
 	var city *City = nil
 
 	err := db.View(func(tx *bolt.Tx) error {
@@ -55,6 +75,9 @@ func FindCity(db *bolt.DB, id string) (*City, error) {
 
 		if val != nil {
 			city, err = cityFromString(id, string(val))
+			if err == nil && includeCountry == true {
+				city.Country, err = FindCountryByCode(db, city.CountryCode)
+			}
 		}
 		return err
 	})
@@ -71,9 +94,9 @@ func SearchCities(
 
 	var city *City
 	for _, cityName := range *cityNames {
-		city, err = FindCity(db, cityName.CityId)
+		city, err = FindCity(db, cityName.CityId, false)
 		city.Name = cityName.Name
-		cities.Cities = append(cities.Cities, city)
+		cities.Cities = appendCity(db, cities.Cities, city, cityName.Locale)
 	}
 
 	return &cities, err

@@ -16,7 +16,7 @@ func MakeApplicationStatusEndpoint(db *bolt.DB) func(*gin.Context) {
 
 func MakeCityEndpoint(db *bolt.DB) func(*gin.Context) {
 	return func(c *gin.Context) {
-		city, err := ds.FindCity(db, c.Param("id"))
+		city, err := ds.FindCity(db, c.Param("id"), true)
 
 		if err != nil {
 			c.JSON(500, nil)

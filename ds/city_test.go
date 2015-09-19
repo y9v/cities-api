@@ -10,11 +10,12 @@ import (
 func TestCity(t *testing.T) {
 	db := h.CreateDB(t)
 	CreateCitiesBucket(db)
+	CreateCountriesBucket(db)
 
 	cityAttrs := []string{
 		"Name",
-		"CountryCode",
-		"Population",
+		"DE",
+		"10000000",
 		"Latitude",
 		"Longitude",
 		"Timezone",
@@ -32,7 +33,7 @@ func TestCity(t *testing.T) {
 			Convey("Sets the city attributes from the string", func() {
 				So(city.Name, ShouldEqual, cityAttrs[0])
 				So(city.CountryCode, ShouldEqual, cityAttrs[1])
-				So(city.Population, ShouldEqual, cityAttrs[2])
+				So(city.Population, ShouldEqual, 10000000)
 				So(city.Latitude, ShouldEqual, cityAttrs[3])
 				So(city.Longitude, ShouldEqual, cityAttrs[4])
 				So(city.Timezone, ShouldEqual, cityAttrs[5])
@@ -53,7 +54,7 @@ func TestCity(t *testing.T) {
 			Convey("Leaves the city attributes blank", func() {
 				So(city.Name, ShouldEqual, "")
 				So(city.CountryCode, ShouldEqual, "")
-				So(city.Population, ShouldEqual, "")
+				So(city.Population, ShouldEqual, 0)
 				So(city.Latitude, ShouldEqual, "")
 				So(city.Longitude, ShouldEqual, "")
 				So(city.Timezone, ShouldEqual, "")
@@ -67,7 +68,7 @@ func TestCity(t *testing.T) {
 
 	Convey("City to string", t, func() {
 		city := City{
-			Id: "1", Name: "New York", CountryCode: "US", Population: "8600000",
+			Id: "1", Name: "New York", CountryCode: "US", Population: 8600000,
 			Latitude: "40.748817", Longitude: "-73.985428", Timezone: "USA/New York",
 		}
 
@@ -77,23 +78,111 @@ func TestCity(t *testing.T) {
 		})
 	})
 
+	Convey("Append city", t, func() {
+		h.PutToBucket(
+			t, db, CountriesBucketName, "1",
+			"US\tUnited States\ten|United States;ru|Соединенные Штаты",
+		)
+
+		cities := Cities{
+			Cities: []*City{
+				&City{Name: "Venice"}, &City{Name: "Moscow"},
+			},
+		}
+
+		Convey("When no city with the same name is in the collection", func() {
+			city := City{Name: "London"}
+			actual := appendCity(db, cities.Cities, &city, "en")
+
+			Convey("Adds the city to the array", func() {
+				So(len(actual), ShouldEqual, 3)
+			})
+
+			Convey("Leaves the city name unchanged", func() {
+				So(actual[2].Name, ShouldEqual, city.Name)
+			})
+		})
+
+		Convey("When city with the same name is in the collection", func() {
+			Convey("When the country exists for the given code", func() {
+				city := City{Name: "Venice", CountryCode: "US"}
+
+				Convey("Default locale", func() {
+					actual := appendCity(db, cities.Cities, &city, "en")
+
+					Convey("Adds the city to the array", func() {
+						So(len(actual), ShouldEqual, 3)
+					})
+
+					Convey("Adds the country name to the city name", func() {
+						So(actual[2].Name, ShouldEqual, "Venice, United States")
+					})
+				})
+
+				Convey("Some other locale", func() {
+					actual := appendCity(db, cities.Cities, &city, "ru")
+
+					Convey("Adds the city to the array", func() {
+						So(len(actual), ShouldEqual, 3)
+					})
+
+					Convey("Adds the country name to the city name", func() {
+						So(actual[2].Name, ShouldEqual, "Venice, Соединенные Штаты")
+					})
+				})
+			})
+
+			Convey("When no country exists for the given code", func() {
+				city := City{Name: "Moscow", CountryCode: "MO"}
+				actual := appendCity(db, cities.Cities, &city, "en")
+
+				Convey("Doesn't adds the city to the array", func() {
+					So(len(actual), ShouldEqual, 2)
+				})
+			})
+		})
+	})
+
 	Convey("Find the city", t, func() {
 		Convey("When the record exists", func() {
 			h.PutToBucket(t, db, CitiesBucketName, "1", cityString)
-			city, err := FindCity(db, "1")
 
-			Convey("Returns a city with attributes set", func() {
-				expected, _ := cityFromString("1", cityString)
-				So(city, ShouldResemble, expected)
+			Convey("With includeCountry set to false", func() {
+				city, err := FindCity(db, "1", false)
+
+				Convey("Returns a city with attributes set", func() {
+					expected, _ := cityFromString("1", cityString)
+					So(city, ShouldResemble, expected)
+				})
+
+				Convey("Returns no error", func() {
+					So(err, ShouldBeNil)
+				})
 			})
 
-			Convey("Returns no error", func() {
-				So(err, ShouldBeNil)
+			Convey("With includeCountry set to true", func() {
+				Convey("When country record exists", func() {
+					countryAttrs := []string{"DE", "Germany", "en|Germany"}
+					countryString := strings.Join(countryAttrs, "\t")
+					h.PutToBucket(t, db, CountriesBucketName, "1", countryString)
+
+					city, err := FindCity(db, "1", true)
+
+					Convey("Returns a city with attributes set", func() {
+						expected, _ := cityFromString("1", cityString)
+						expected.Country, _ = countryFromString("1", countryString)
+						So(city, ShouldResemble, expected)
+					})
+
+					Convey("Returns no error", func() {
+						So(err, ShouldBeNil)
+					})
+				})
 			})
 		})
 
 		Convey("When the record does not exist", func() {
-			city, err := FindCity(db, "0")
+			city, err := FindCity(db, "0", false)
 
 			Convey("Returns a nil instead of a city", func() {
 				So(city, ShouldBeNil)
@@ -106,7 +195,7 @@ func TestCity(t *testing.T) {
 
 		Convey("When an incorrect value is stored in the db", func() {
 			h.PutToBucket(t, db, CitiesBucketName, "2", "")
-			city, err := FindCity(db, "2")
+			city, err := FindCity(db, "2", false)
 
 			Convey("Returns an empty city", func() {
 				So(city, ShouldResemble, &City{})

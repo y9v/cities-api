@@ -16,6 +16,7 @@ getdumpfiles:
 	unzip alternateNames.zip -d data
 	rm alternateNames.zip
 	rm data/iso-languagecodes.txt
+	(cd data && curl -O http://download.geonames.org/export/dump/countryInfo.txt)
 
 configure:
 	cp config.json.example config.json

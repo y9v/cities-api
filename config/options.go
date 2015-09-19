@@ -11,6 +11,7 @@ type Options struct {
 	Timeout            int
 	CORSOrigins        []string
 	Locales            []string
+	CountriesFile      string
 	CitiesFile         string
 	AlternateNamesFile string
 }
@@ -21,6 +22,7 @@ func buildDefault() *Options {
 		Timeout:            5,
 		CORSOrigins:        []string{"http://localhost"},
 		Locales:            []string{"en"},
+		CountriesFile:      "data/countryInfo.txt",
 		CitiesFile:         "data/cities.txt",
 		AlternateNamesFile: "data/alternateNames.txt",
 	}

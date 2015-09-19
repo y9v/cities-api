@@ -8,6 +8,31 @@ import (
 )
 
 func TestBuckets(t *testing.T) {
+	Convey("Countries bucket creation", t, func() {
+		Convey("Creates a bucket", func() {
+			db := h.CreateDB(t)
+			CreateCountriesBucket(db)
+
+			db.View(func(tx *bolt.Tx) error {
+				b := tx.Bucket(CountriesBucketName)
+				So(b, ShouldNotBeNil)
+				return nil
+			})
+		})
+
+		Convey("Deletes the existing bucket", func() {
+			db := h.CreateDB(t)
+			oldBucket := h.CreateBucket(t, db, CountriesBucketName)
+			CreateCountriesBucket(db)
+
+			db.View(func(tx *bolt.Tx) error {
+				newBucket := tx.Bucket(CountriesBucketName)
+				So(oldBucket, ShouldNotEqual, newBucket)
+				return nil
+			})
+		})
+	})
+
 	Convey("Cities bucket creation", t, func() {
 		Convey("Creates a bucket", func() {
 			db := h.CreateDB(t)

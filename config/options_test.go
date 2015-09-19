@@ -19,6 +19,7 @@ func TestOptions(t *testing.T) {
 				So(options.CORSOrigins, ShouldResemble, defaultOptions.CORSOrigins)
 				So(options.Locales, ShouldResemble, defaultOptions.Locales)
 				So(options.CitiesFile, ShouldEqual, defaultOptions.CitiesFile)
+				So(options.CountriesFile, ShouldEqual, defaultOptions.CountriesFile)
 				So(options.AlternateNamesFile, ShouldEqual, defaultOptions.AlternateNamesFile)
 			})
 		})
@@ -31,6 +32,7 @@ func TestOptions(t *testing.T) {
 					 "Timeout": 20,
 					 "CORSOrigins": ["localhost", "example.com"],
 					 "Locales": ["ru", "uk", "en"],
+					 "CountriesFile": "files/countries.txt",
 					 "CitiesFile": "files/cities.txt",
 					 "AlternateNamesFile": "files/alternate.txt"
 				 }`,
@@ -46,6 +48,7 @@ func TestOptions(t *testing.T) {
 					[]string{"localhost", "example.com"},
 				)
 				So(options.Locales, ShouldResemble, []string{"ru", "uk", "en"})
+				So(options.CountriesFile, ShouldEqual, "files/countries.txt")
 				So(options.CitiesFile, ShouldEqual, "files/cities.txt")
 				So(options.AlternateNamesFile, ShouldEqual, "files/alternate.txt")
 			})

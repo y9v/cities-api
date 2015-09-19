@@ -21,30 +21,43 @@ func scanAlternateNames(
 	scanner := bufio.NewScanner(reader)
 
 	cityNamesCount := 0
+	countriesTranslations := make(map[string]map[string]string)
 
-	err = db.Batch(func(tx *bolt.Tx) error {
+	err = db.Update(func(tx *bolt.Tx) error {
 		cityNamesBucket := tx.Bucket(ds.CityNamesBucketName)
+		countriesBucket := tx.Bucket(ds.CountriesBucketName)
 
 		for scanner.Scan() {
-			cityData := strings.Split(scanner.Text(), "\t")
+			nameData := strings.Split(scanner.Text(), "\t")
 
-			if isSupportedLocale(cityData[2], locales) || cityData[4] == "1" {
-				city, err := ds.FindCity(db, cityData[1])
-				if err != nil {
-					return err
-				}
-
+			if isSupportedLocale(nameData[2], locales) || nameData[4] == "1" {
+				city, _ := ds.FindCity(db, nameData[1], false)
 				if city != nil {
-					err = addCityToIndex(
-						cityNamesBucket, city.Id, cityData[3], cityData[2], city.Population,
+					addCityToIndex(
+						cityNamesBucket, city.Id, nameData[3], nameData[2], city.Population,
 					)
-					if err != nil {
-						return err
-					}
 
 					cityNamesCount++
+				} else if nameData[2] != "en" {
+					country, _ := ds.FindCountry(db, nameData[1])
+					if country != nil {
+						if countriesTranslations[country.Id] == nil {
+							countriesTranslations[country.Id] = make(map[string]string)
+						}
+						if countriesTranslations[country.Id][nameData[2]] == "" {
+							countriesTranslations[country.Id][nameData[2]] = nameData[3]
+						}
+					}
 				}
 			}
+		}
+
+		for id, translations := range countriesTranslations {
+			var values []string
+			for locale, name := range translations {
+				values = append(values, locale+"|"+name)
+			}
+			addTranslationsToCountry(countriesBucket, id, values)
 		}
 
 		return err

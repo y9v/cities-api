@@ -25,7 +25,8 @@ func main() {
 		fmt.Println("[PARSER] Skipping, already done")
 	} else {
 		go parser.Scan(
-			db, options.Locales, options.CitiesFile, options.AlternateNamesFile,
+			db, options.Locales, options.CountriesFile,
+			options.CitiesFile, options.AlternateNamesFile,
 		)
 	}
 

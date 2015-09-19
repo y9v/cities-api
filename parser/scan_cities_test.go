@@ -14,10 +14,7 @@ func TestScanCities(t *testing.T) {
 		ds.CreateCityNamesBucket(db)
 
 		Convey("When cities files exists", func() {
-			filename := h.CreateTempfile(
-				t,
-				"890516\tGwanda\tGwanda\tJawunda\t-20.93333\t29\tP\tPPLA\tZW\t\t07\t\t\t\t14450\t\t982\tAfrica/Harare\t2009-06-30\n890983\tGokwe\tGokwe\tGokwe\t-18.20476\t28.9349\tP\tPPL\tZW\t\t02\t\t\t\t18942\t\t1237\tAfrica/Harare\t2012-05-05",
-			)
+			filename := h.CreateTempfile(t, "890516\tGwanda\tGwanda\tJawunda\t-20.93333\t29\tP\tPPLA\tZW\t\t07\t\t\t\t14450\t\t982\tAfrica/Harare\t2009-06-30\n890983\tGokwe\tGokwe\tGokwe\t-18.20476\t28.9349\tP\tPPL\tZW\t\t02\t\t\t\t18942\t\t1237\tAfrica/Harare\t2012-05-05")
 
 			count, err := scanCities(db, filename)
 
@@ -31,10 +28,10 @@ func TestScanCities(t *testing.T) {
 
 			Convey("Stores parsed city names to the db", func() {
 				actual := h.ReadFromBucket(t, db, ds.CityNamesBucketName, "gwanda")
-				So(actual, ShouldEqual, "Gwanda\t890516\t\t14450")
+				So(actual, ShouldEqual, "Gwanda\t890516\ten\t14450")
 
 				actual = h.ReadFromBucket(t, db, ds.CityNamesBucketName, "gokwe")
-				So(actual, ShouldEqual, "Gokwe\t890983\t\t18942")
+				So(actual, ShouldEqual, "Gokwe\t890983\ten\t18942")
 			})
 
 			Convey("Returns number of scanned records", func() {

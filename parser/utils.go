@@ -4,7 +4,34 @@ import (
 	"errors"
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
+	"strconv"
+	"strings"
 )
+
+func prepareCountryBytes(countryData []string) ([]byte, error) {
+	var bytes []byte
+	var err error
+
+	if len(countryData) == 19 {
+		bytes = []byte(
+			countryData[0] + "\t" + countryData[4] + "\ten|" + countryData[4],
+		)
+	} else {
+		err = errors.New("Invalid data in countries file")
+	}
+
+	return bytes, err
+}
+
+func addTranslationsToCountry(
+	bucket *bolt.Bucket, id string, translations []string,
+) error {
+	val := bucket.Get([]byte(id))
+
+	return bucket.Put([]byte(id), []byte(
+		string(val)+";"+strings.Join(translations, ";"),
+	))
+}
 
 func prepareCityBytes(cityData []string) ([]byte, error) {
 	var bytes []byte
@@ -23,10 +50,14 @@ func prepareCityBytes(cityData []string) ([]byte, error) {
 }
 
 func addCityToIndex(
-	bucket *bolt.Bucket, id string, name string, locale string, population string,
+	bucket *bolt.Bucket, id string, name string, locale string, population uint32,
 ) error {
 	var err error
 	var cityName *ds.CityName
+
+	if locale == "" {
+		locale = "en"
+	}
 
 	cityNameKey := []byte(ds.PrepareCityNameKey(name))
 	if conflict := bucket.Get(cityNameKey); conflict != nil {
@@ -37,7 +68,9 @@ func addCityToIndex(
 	}
 
 	err = bucket.Put(
-		cityNameKey, []byte(name+"\t"+id+"\t"+locale+"\t"+population),
+		cityNameKey, []byte(
+			name+"\t"+id+"\t"+locale+"\t"+strconv.Itoa(int(population)),
+		),
 	)
 
 	return err
