@@ -14,9 +14,14 @@ func TestScanCities(t *testing.T) {
 		ds.CreateCityNamesBucket(db)
 
 		Convey("When cities files exists", func() {
-			filename := h.CreateTempfile(t, "890516\tGwanda\tGwanda\tJawunda\t-20.93333\t29\tP\tPPLA\tZW\t\t07\t\t\t\t14450\t\t982\tAfrica/Harare\t2009-06-30\n890983\tGokwe\tGokwe\tGokwe\t-18.20476\t28.9349\tP\tPPL\tZW\t\t02\t\t\t\t18942\t\t1237\tAfrica/Harare\t2012-05-05")
+			filename := h.CreateTempfile(
+				t,
+				"890516\tGwanda\tGwanda\tJawunda\t-20.93333\t29\tP\tPPLA\tZW\t\t07\t\t\t\t14450\t\t982\tAfrica/Harare\t2009-06-30\n"+
+					"890983\tGokwe\tGokwe\tGokwe\t-18.20476\t28.9349\tP\tPPL\tZW\t\t02\t\t\t\t18942\t\t1237\tAfrica/Harare\t2012-05-05\n"+
+					"890984\tSmall city\tGokwe\tJawunda\t-18.20576\t29.9349\tP\tPPL\tZW\t\t02\t\t\t\t1942\t\t1237\tAfrica/Harare\t2012-05-05",
+			)
 
-			count, err := scanCities(db, filename)
+			count, err := scanCities(db, filename, 2000)
 
 			Convey("Stores parsed cities to the db", func() {
 				actual := h.ReadFromBucket(t, db, ds.CitiesBucketName, "890516")
@@ -45,7 +50,7 @@ func TestScanCities(t *testing.T) {
 
 		Convey("When the file has invalid data", func() {
 			filename := h.CreateTempfile(t, "crap\ncrap\ncrap")
-			count, err := scanCities(db, filename)
+			count, err := scanCities(db, filename, 2000)
 
 			Convey("Returns a zero number of scanned records", func() {
 				So(count, ShouldEqual, 0)
@@ -57,7 +62,7 @@ func TestScanCities(t *testing.T) {
 		})
 
 		Convey("When cities file does not exist", func() {
-			count, err := scanCities(db, "fake.txt")
+			count, err := scanCities(db, "fake.txt", 2000)
 
 			Convey("Returns a zero number of scanned records", func() {
 				So(count, ShouldEqual, 0)

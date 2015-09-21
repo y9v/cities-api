@@ -9,7 +9,9 @@ import (
 	"strings"
 )
 
-func scanCities(db *bolt.DB, filename string) (int, error) {
+func scanCities(
+	db *bolt.DB, filename string, minPopulation int,
+) (int, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return 0, err
@@ -32,15 +34,16 @@ func scanCities(db *bolt.DB, filename string) (int, error) {
 				return err
 			}
 
-			citiesBucket.Put([]byte(cityData[0]), cityBytes)
-
 			population, _ := strconv.ParseInt(cityData[14], 0, 64)
+			if population > int64(minPopulation) {
+				citiesBucket.Put([]byte(cityData[0]), cityBytes)
 
-			addCityToIndex(
-				cityNamesBucket, cityData[0], cityData[1], "", uint32(population),
-			)
+				addCityToIndex(
+					cityNamesBucket, cityData[0], cityData[1], "", uint32(population),
+				)
 
-			citiesCount++
+				citiesCount++
+			}
 		}
 
 		return err

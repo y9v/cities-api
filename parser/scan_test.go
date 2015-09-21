@@ -17,11 +17,11 @@ func TestScan(t *testing.T) {
 		alternateNamesFilename := h.CreateTempfile(t, "10\t890516\tru\tГуанда\t\t\t\t")
 
 		Convey("When both files are present and valid", func() {
-			Scan(db, locales, countriesFilename, citiesFilename, alternateNamesFilename)
+			Scan(db, locales, 2000, countriesFilename, citiesFilename, alternateNamesFilename)
 
 			Convey("Does not panics", func() {
 				So(func() {
-					Scan(db, locales, countriesFilename, citiesFilename, alternateNamesFilename)
+					Scan(db, locales, 2000, countriesFilename, citiesFilename, alternateNamesFilename)
 				}, ShouldNotPanic)
 			})
 
@@ -44,7 +44,7 @@ func TestScan(t *testing.T) {
 		Convey("When the countries file does not exist", func() {
 			Convey("Panics", func() {
 				So(func() {
-					Scan(db, locales, "fake.txt", citiesFilename, alternateNamesFilename)
+					Scan(db, locales, 2000, "fake.txt", citiesFilename, alternateNamesFilename)
 				}, ShouldPanic)
 			})
 		})
@@ -52,7 +52,7 @@ func TestScan(t *testing.T) {
 		Convey("When the cities file does not exist", func() {
 			Convey("Panics", func() {
 				So(func() {
-					Scan(db, locales, countriesFilename, "fake.txt", alternateNamesFilename)
+					Scan(db, locales, 2000, countriesFilename, "fake.txt", alternateNamesFilename)
 				}, ShouldPanic)
 			})
 		})
@@ -60,7 +60,7 @@ func TestScan(t *testing.T) {
 		Convey("When the alternate names file does not exist", func() {
 			Convey("Panics", func() {
 				So(func() {
-					Scan(db, locales, countriesFilename, citiesFilename, "fake.txt")
+					Scan(db, locales, 2000, countriesFilename, citiesFilename, "fake.txt")
 				}, ShouldPanic)
 			})
 		})

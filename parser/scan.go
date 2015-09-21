@@ -8,8 +8,8 @@ import (
 )
 
 func Scan(
-	db *bolt.DB, locales []string, countriesFile string,
-	citiesFile string, alternateNamesFile string,
+	db *bolt.DB, locales []string, minPopulation int,
+	countriesFile string, citiesFile string, alternateNamesFile string,
 ) {
 	startTime := time.Now()
 
@@ -25,7 +25,7 @@ func Scan(
 	countriesCount, err := scanCountries(db, countriesFile)
 	if err == nil {
 		fmt.Println("[PARSER] Started cities parsing")
-		citiesCount, err = scanCities(db, citiesFile)
+		citiesCount, err = scanCities(db, citiesFile, minPopulation)
 		if err == nil {
 			fmt.Println("[PARSER] Started alternate names parsing")
 			cityNamesCount, err = scanAlternateNames(db, alternateNamesFile, locales)

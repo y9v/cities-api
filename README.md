@@ -18,6 +18,7 @@ dump), as well as all official names.
 | Timeout            | Server timeout, in seconds           | 5                       |
 | CORSOrigins        | The list of CORS origins             | http://localhost        |
 | Locales            | The list of locales to support       | en                      |
+| MinPopulation      | Lower limit for the population       | 2000                    |
 | CountriesFile      | Filename to the countries dump       | data/countryInfo.txt    |
 | CitiesFile         | Filename to the cities dump          | data/cities.txt         |
 | AlternateNamesFile | Filename to the alternate names dump | data/alternateNames.txt |
@@ -90,6 +91,9 @@ Returns 5 matching cities, sorted by population.
 If there are several matching citynames for one city, the first one is
 taken based on the locale priority.
 
+If there are cities with identical names in the search results, the
+country name is added to the city.
+
 **Resourse URL:**
 
 `/1.0/search/cities`
@@ -128,14 +132,6 @@ taken based on the locale priority.
       "latitude": "27.07311",
       "longitude": "-82.4076",
       "timezone": "America/New_York"
-    },
-    {
-      "id": "4251958",
-      "name": "Venice, United States",
-      "population": 1890,
-      "latitude": "38.67227",
-      "longitude": "-90.16983",
-      "timezone": "America/Chicago"
     }
   ]
 }
