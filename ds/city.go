@@ -17,10 +17,6 @@ type City struct {
 	Country     *Country `json:"country,omitempty"`
 }
 
-type Cities struct {
-	Cities []*City `json:"cities,omitempty"`
-}
-
 func cityFromString(id string, cityString string) (*City, error) {
 	var city City
 	var err error
@@ -51,20 +47,6 @@ func (city *City) toString() string {
 		"\t" + city.Longitude + "\t" + city.Timezone
 }
 
-func appendCity(db *bolt.DB, cities []*City, city *City, locale string) []*City {
-	for _, el := range cities {
-		if el.Name == city.Name {
-			if country, _ := FindCountryByCode(db, city.CountryCode); country != nil {
-				city.Name = city.Name + ", " + country.Translations[locale]
-				break
-			} else {
-				return cities
-			}
-		}
-	}
-	return append(cities, city)
-}
-
 func FindCity(db *bolt.DB, id string, includeCountry bool) (*City, error) {
 	var city *City = nil
 
@@ -83,21 +65,4 @@ func FindCity(db *bolt.DB, id string, includeCountry bool) (*City, error) {
 	})
 
 	return city, err
-}
-
-func SearchCities(
-	db *bolt.DB, locales []string, query string, limit int,
-) (*Cities, error) {
-	var cities Cities
-
-	cityNames, err := searchCityNames(db, locales, query, limit)
-
-	var city *City
-	for _, cityName := range *cityNames {
-		city, err = FindCity(db, cityName.CityId, false)
-		city.Name = cityName.Name
-		cities.Cities = appendCity(db, cities.Cities, city, cityName.Locale)
-	}
-
-	return &cities, err
 }
