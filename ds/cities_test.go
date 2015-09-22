@@ -1,6 +1,7 @@
 package ds
 
 import (
+	"github.com/lebedev-yury/cities/cache"
 	h "github.com/lebedev-yury/cities/test_helpers"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
@@ -103,21 +104,53 @@ func TestCities(t *testing.T) {
 		}
 
 		locales := []string{"ru", "en", "de"}
-		result, err := SearchCities(db, locales, "Mo", 5)
 
-		Convey("Finds matching cities", func() {
-			So(len(result.Cities), ShouldEqual, 2)
-			So(result.Cities[0].Id, ShouldEqual, cities[1].Id)
-			So(result.Cities[1].Id, ShouldEqual, cities[0].Id)
+		Convey("Non cached search", func() {
+			result, err := SearchCities(db, locales, "Mo", 5)
+
+			Convey("Finds matching cities", func() {
+				So(len(result.Cities), ShouldEqual, 2)
+				So(result.Cities[0].Id, ShouldEqual, cities[1].Id)
+				So(result.Cities[1].Id, ShouldEqual, cities[0].Id)
+			})
+
+			Convey("Sets the city names from the mathing cityname", func() {
+				So(result.Cities[0].Name, ShouldEqual, cityNames[1].Name)
+				So(result.Cities[1].Name, ShouldEqual, cityNames[0].Name)
+			})
+
+			Convey("Returns no error", func() {
+				So(err, ShouldBeNil)
+			})
 		})
 
-		Convey("Sets the city names from the mathing cityname", func() {
-			So(result.Cities[0].Name, ShouldEqual, cityNames[1].Name)
-			So(result.Cities[1].Name, ShouldEqual, cityNames[0].Name)
-		})
+		Convey("Cached search", func() {
+			c := cache.New()
 
-		Convey("Returns no error", func() {
-			So(err, ShouldBeNil)
+			Convey("For short queries", func() {
+				results, expectedErr := SearchCities(db, locales, "Mo", 5)
+				cacheMissResults, actualErr := CachedCitiesSearch(db, c, locales, "Mo", 5)
+				cacheHitResults, _ := CachedCitiesSearch(db, c, locales, "Mo", 5)
+
+				Convey("Returns results from search if cache miss", func() {
+					So(cacheMissResults, ShouldResemble, results)
+					So(actualErr, ShouldEqual, expectedErr)
+				})
+
+				Convey("Returns results from cache if cache hit", func() {
+					So(cacheHitResults, ShouldResemble, cacheMissResults)
+				})
+			})
+
+			Convey("For longer queries", func() {
+				expected, expectedErr := SearchCities(db, locales, "Moscow", 5)
+				actual, actualErr := CachedCitiesSearch(db, c, locales, "Moscow", 5)
+
+				Convey("Returns results from search if cache miss", func() {
+					So(actual, ShouldResemble, expected)
+					So(actualErr, ShouldEqual, expectedErr)
+				})
+			})
 		})
 	})
 }

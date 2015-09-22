@@ -2,6 +2,8 @@ package ds
 
 import (
 	"github.com/boltdb/bolt"
+	"github.com/lebedev-yury/cities/cache"
+	"unicode/utf8"
 )
 
 type Cities struct {
@@ -37,4 +39,27 @@ func SearchCities(
 	}
 
 	return &cities, err
+}
+
+func CachedCitiesSearch(
+	db *bolt.DB, c *cache.Cache, locales []string, query string, limit int,
+) (*Cities, error) {
+	if utf8.RuneCountInString(query) > 2 {
+		return SearchCities(db, locales, query, limit)
+	}
+
+	var err error
+	var cities *Cities
+
+	cacheKey := "cs." + string(limit) + "." + query
+	if i, ok := c.Get(cacheKey); ok {
+		cities = i.(*Cities)
+	} else {
+		cities, err = SearchCities(db, locales, query, limit)
+		if len(cities.Cities) > 0 {
+			c.Set(cacheKey, cities)
+		}
+	}
+
+	return cities, err
 }
