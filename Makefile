@@ -29,6 +29,12 @@ dockerbuild:
 dockerrun: dockerbuild
 	docker run -t -p 80:8080 --name cities --rm cities
 
+dockerrm:
+	docker stop cities
+	docker rm cities
+
+dockerrerun: dockerrm dockerrun
+
 test:
 	godep go vet ./...
 	godep go test ./... -cover

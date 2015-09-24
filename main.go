@@ -23,16 +23,23 @@ func main() {
 	}
 
 	c := cache.New()
+	parsingDone := make(chan bool, 1)
 
 	if ds.GetAppStatus(db).IsIndexed() {
 		fmt.Println("[PARSER] Skipping, already done")
+		parsingDone <- true
 	} else {
 		go parser.Scan(
-			db, options.Locales, options.MinPopulation,
+			db, parsingDone, options.Locales, options.MinPopulation,
 			options.CountriesFile, options.CitiesFile,
 			options.AlternateNamesFile,
 		)
 	}
+
+	<-parsingDone
+	fmt.Println("[CACHE] Warming up...")
+	warmUpSearchCache(db, c, options.Locales, 5)
+	fmt.Println("[CACHE] Warming up done")
 
 	fmt.Printf("* Listening on port %s\n\n", options.Port)
 	log.Fatal(Server(db, options, c).ListenAndServe())

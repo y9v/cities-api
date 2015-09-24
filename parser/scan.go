@@ -8,7 +8,7 @@ import (
 )
 
 func Scan(
-	db *bolt.DB, locales []string, minPopulation int,
+	db *bolt.DB, done chan bool, locales []string, minPopulation int,
 	countriesFile string, citiesFile string, alternateNamesFile string,
 ) {
 	startTime := time.Now()
@@ -45,5 +45,6 @@ func Scan(
 		fmt.Printf("[PARSER] Added %d cities\n", citiesCount)
 		fmt.Printf("[PARSER] Added %d city names\n", citiesCount+cityNamesCount)
 		fmt.Printf("[PARSER] Parsing done (in %s)\n", time.Since(startTime))
+		done <- true
 	}
 }
