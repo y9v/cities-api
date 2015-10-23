@@ -30,14 +30,14 @@ func TestCityNames(t *testing.T) {
 	Convey("Uniq citynames", t, func() {
 		Convey("Removes values duplicated by city id", func() {
 			actual := CityNames{
-				&CityName{Name: "Moscow", CityId: "1"},
-				&CityName{Name: "Moskau", CityId: "1"},
-				&CityName{Name: "Montreal", CityId: "2"},
+				&CityName{Name: "Moscow", CityId: 1},
+				&CityName{Name: "Moskau", CityId: 1},
+				&CityName{Name: "Montreal", CityId: 2},
 			}
 
 			expected := CityNames{
-				&CityName{Name: "Moscow", CityId: "1"},
-				&CityName{Name: "Montreal", CityId: "2"},
+				&CityName{Name: "Moscow", CityId: 1},
+				&CityName{Name: "Montreal", CityId: 2},
 			}
 
 			actual.Uniq()
@@ -46,8 +46,8 @@ func TestCityNames(t *testing.T) {
 
 		Convey("Leaves values with the same name but unique city ids", func() {
 			actual := CityNames{
-				&CityName{Name: "Moscow", CityId: "1"},
-				&CityName{Name: "Moscow", CityId: "2"},
+				&CityName{Name: "Moscow", CityId: 1},
+				&CityName{Name: "Moscow", CityId: 2},
 			}
 
 			expected := actual
@@ -63,19 +63,19 @@ func TestCityNames(t *testing.T) {
 
 		cityNames := CityNames{
 			&CityName{
-				Key: "moscow|2", Name: "Moscow", CityId: "2",
+				Key: "moscow|2", Name: "Moscow", CityId: 2,
 				Locale: "en", Population: 25000,
 			},
 			&CityName{
-				Key: "moscow", Name: "Moscow", CityId: "1",
+				Key: "moscow", Name: "Moscow", CityId: 1,
 				Locale: "en", Population: 12000000,
 			},
 			&CityName{
-				Key: "montreal", Name: "Montreal", CityId: "3",
+				Key: "montreal", Name: "Montreal", CityId: 3,
 				Locale: "en", Population: 1600000,
 			},
 			&CityName{
-				Key: "moskau", Name: "Moskau", CityId: "1",
+				Key: "moskau", Name: "Moskau", CityId: 1,
 				Locale: "de", Population: 12000000,
 			},
 		}

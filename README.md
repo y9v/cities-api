@@ -64,11 +64,11 @@ Returns a single city by the requested ID parameter.
 
 ```json
 {
-  "id": "3164603",
+  "id": 3164603,
   "name": "Venice",
   "population": 51298,
-  "latitude": "45.43713",
-  "longitude": "12.33265",
+  "latitude": 45.43713,
+  "longitude": 12.33265,
   "timezone": "Europe/Rome",
   "country": {
     "code": "IT",
@@ -110,27 +110,27 @@ country name is added to the city.
 {
   "cities": [
     {
-      "id": "3164603",
+      "id": 3164603,
       "name": "Venice",
       "population": 51298,
-      "latitude": "45.43713",
-      "longitude": "12.33265",
+      "latitude": 45.43713,
+      "longitude": 12.33265,
       "timezone": "Europe/Rome"
     },
     {
-      "id": "4176380",
+      "id": 4176380,
       "name": "Venice, United States",
       "population": 20748,
-      "latitude": "27.09978",
-      "longitude": "-82.45426",
+      "latitude": 27.09978,
+      "longitude": -82.45426,
       "timezone": "America/New_York"
     },
     {
-      "id": "4176387",
+      "id": 4176387,
       "name": "Venice Gardens",
       "population": 7104,
-      "latitude": "27.07311",
-      "longitude": "-82.4076",
+      "latitude": 27.07311,
+      "longitude": -82.4076,
       "timezone": "America/New_York"
     }
   ]
@@ -155,4 +155,10 @@ Before committing:
 
 ```
 make test
+```
+
+To build and run the docker instance:
+
+```
+make dockerrun
 ```

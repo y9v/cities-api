@@ -62,7 +62,7 @@ func addCityToIndex(
 	cityNameKey := []byte(ds.PrepareCityNameKey(name))
 	if conflict := bucket.Get(cityNameKey); conflict != nil {
 		cityName, err = ds.CityNameFromString(string(cityNameKey), string(conflict))
-		if cityName.CityId != id {
+		if strconv.Itoa(cityName.CityId) != id {
 			cityNameKey = []byte(string(cityNameKey) + "|" + id)
 		}
 	}

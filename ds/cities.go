@@ -3,6 +3,7 @@ package ds
 import (
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/cache"
+	"strconv"
 	"unicode/utf8"
 )
 
@@ -33,7 +34,7 @@ func SearchCities(
 
 	var city *City
 	for _, cityName := range *cityNames {
-		city, err = FindCity(db, cityName.CityId, false)
+		city, err = FindCity(db, strconv.Itoa(cityName.CityId), false)
 		city.Name = cityName.Name
 		cities.Cities = appendCity(db, cities.Cities, city, cityName.Locale)
 	}

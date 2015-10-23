@@ -4,6 +4,7 @@ import (
 	"github.com/lebedev-yury/cities/cache"
 	h "github.com/lebedev-yury/cities/test_helpers"
 	. "github.com/smartystreets/goconvey/convey"
+	"strconv"
 	"testing"
 )
 
@@ -83,11 +84,11 @@ func TestCities(t *testing.T) {
 
 		cityNames := CityNames{
 			&CityName{
-				Key: "montreal", Name: "Montréal", CityId: "1",
+				Key: "montreal", Name: "Montréal", CityId: 1,
 				Locale: "fr", Population: 1600000,
 			},
 			&CityName{
-				Key: "moscow", Name: "Moskau", CityId: "2",
+				Key: "moscow", Name: "Moskau", CityId: 2,
 				Locale: "de", Population: 12000000,
 			},
 		}
@@ -96,11 +97,13 @@ func TestCities(t *testing.T) {
 		}
 
 		cities := []*City{
-			&City{Id: "1", Name: "Montreal"},
-			&City{Id: "2", Name: "Moscow"},
+			&City{ID: 1, Name: "Montreal"},
+			&City{ID: 2, Name: "Moscow"},
 		}
 		for _, city := range cities {
-			h.PutToBucket(t, db, CitiesBucketName, city.Id, city.toString())
+			h.PutToBucket(
+				t, db, CitiesBucketName, strconv.Itoa(city.ID), city.toString(),
+			)
 		}
 
 		locales := []string{"ru", "en", "de"}
@@ -110,8 +113,8 @@ func TestCities(t *testing.T) {
 
 			Convey("Finds matching cities", func() {
 				So(len(result.Cities), ShouldEqual, 2)
-				So(result.Cities[0].Id, ShouldEqual, cities[1].Id)
-				So(result.Cities[1].Id, ShouldEqual, cities[0].Id)
+				So(result.Cities[0].ID, ShouldEqual, cities[1].ID)
+				So(result.Cities[1].ID, ShouldEqual, cities[0].ID)
 			})
 
 			Convey("Sets the city names from the mathing cityname", func() {

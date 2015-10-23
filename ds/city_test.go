@@ -16,26 +16,26 @@ func TestCity(t *testing.T) {
 		"Name",
 		"DE",
 		"10000000",
-		"Latitude",
-		"Longitude",
+		"40.748817",
+		"-73.958428",
 		"Timezone",
 	}
 	cityString := strings.Join(cityAttrs, "\t")
 
 	Convey("City from string", t, func() {
 		Convey("When the string is correct", func() {
-			city, err := cityFromString("1", cityString)
+			city, err := cityFromString(1, cityString)
 
 			Convey("Sets the city id from param", func() {
-				So(city.Id, ShouldEqual, "1")
+				So(city.ID, ShouldEqual, 1)
 			})
 
 			Convey("Sets the city attributes from the string", func() {
 				So(city.Name, ShouldEqual, cityAttrs[0])
 				So(city.CountryCode, ShouldEqual, cityAttrs[1])
 				So(city.Population, ShouldEqual, 10000000)
-				So(city.Latitude, ShouldEqual, cityAttrs[3])
-				So(city.Longitude, ShouldEqual, cityAttrs[4])
+				So(city.Latitude, ShouldEqual, 40.748817)
+				So(city.Longitude, ShouldEqual, -73.958428)
 				So(city.Timezone, ShouldEqual, cityAttrs[5])
 			})
 
@@ -45,18 +45,18 @@ func TestCity(t *testing.T) {
 		})
 
 		Convey("When the string is incorrect", func() {
-			city, err := cityFromString("1", "")
+			city, err := cityFromString(1, "")
 
 			Convey("Leaves the city id blank", func() {
-				So(city.Id, ShouldEqual, "")
+				So(city.ID, ShouldEqual, 0)
 			})
 
 			Convey("Leaves the city attributes blank", func() {
 				So(city.Name, ShouldEqual, "")
 				So(city.CountryCode, ShouldEqual, "")
 				So(city.Population, ShouldEqual, 0)
-				So(city.Latitude, ShouldEqual, "")
-				So(city.Longitude, ShouldEqual, "")
+				So(city.Latitude, ShouldEqual, 0)
+				So(city.Longitude, ShouldEqual, 0)
 				So(city.Timezone, ShouldEqual, "")
 			})
 
@@ -68,8 +68,8 @@ func TestCity(t *testing.T) {
 
 	Convey("City to string", t, func() {
 		city := City{
-			Id: "1", Name: "New York", CountryCode: "US", Population: 8600000,
-			Latitude: "40.748817", Longitude: "-73.985428", Timezone: "USA/New York",
+			ID: 1, Name: "New York", CountryCode: "US", Population: 8600000,
+			Latitude: 40.748817, Longitude: -73.985428, Timezone: "USA/New York",
 		}
 
 		Convey("Joins the city properties with tab chars", func() {
@@ -86,7 +86,7 @@ func TestCity(t *testing.T) {
 				city, err := FindCity(db, "1", false)
 
 				Convey("Returns a city with attributes set", func() {
-					expected, _ := cityFromString("1", cityString)
+					expected, _ := cityFromString(1, cityString)
 					So(city, ShouldResemble, expected)
 				})
 
@@ -104,7 +104,7 @@ func TestCity(t *testing.T) {
 					city, err := FindCity(db, "1", true)
 
 					Convey("Returns a city with attributes set", func() {
-						expected, _ := cityFromString("1", cityString)
+						expected, _ := cityFromString(1, cityString)
 						expected.Country, _ = countryFromString("1", countryString)
 						So(city, ShouldResemble, expected)
 					})

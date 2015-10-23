@@ -8,13 +8,13 @@ import (
 type CityName struct {
 	Key        string
 	Name       string
-	CityId     string
+	CityId     int
 	Locale     string
 	Population uint32
 }
 
 func (cityName *CityName) toString() string {
-	return cityName.Name + "\t" + cityName.CityId + "\t" +
+	return cityName.Name + "\t" + strconv.Itoa(cityName.CityId) + "\t" +
 		cityName.Locale + "\t" + strconv.Itoa(int(cityName.Population))
 }
 
@@ -35,10 +35,10 @@ func CityNameFromString(key string, cityNameString string) (*CityName, error) {
 	if len(cityNameData) == 4 {
 		var population int64
 		population, err = strconv.ParseInt(cityNameData[3], 0, 64)
+		cityName.CityId, err = strconv.Atoi(cityNameData[1])
 
 		cityName.Key = key
 		cityName.Name = cityNameData[0]
-		cityName.CityId = cityNameData[1]
 		cityName.Locale = cityNameData[2]
 		cityName.Population = uint32(population)
 	} else {

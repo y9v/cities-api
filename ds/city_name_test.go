@@ -29,7 +29,7 @@ func TestCityName(t *testing.T) {
 
 	Convey("Cityname to string", t, func() {
 		cityName := CityName{
-			Name: "New York", CityId: "1", Locale: "en", Population: 8600000,
+			Name: "New York", CityId: 1, Locale: "en", Population: 8600000,
 		}
 
 		Convey("Joins the cityname properties with tab chars", func() {
@@ -41,7 +41,7 @@ func TestCityName(t *testing.T) {
 		db := h.CreateDB(t)
 		CreateCityNamesBucket(db)
 
-		cityNameAttrs := []string{"Name", "CityId", "Locale", "10000000"}
+		cityNameAttrs := []string{"Name", "1", "Locale", "10000000"}
 		cityNameString := strings.Join(cityNameAttrs, "\t")
 
 		Convey("When the string is correct", func() {
@@ -53,7 +53,7 @@ func TestCityName(t *testing.T) {
 
 			Convey("Sets the cityname attributes from the string", func() {
 				So(cityName.Name, ShouldEqual, cityNameAttrs[0])
-				So(cityName.CityId, ShouldEqual, cityNameAttrs[1])
+				So(cityName.CityId, ShouldEqual, 1)
 				So(cityName.Locale, ShouldEqual, cityNameAttrs[2])
 			})
 

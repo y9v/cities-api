@@ -5,6 +5,7 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/lebedev-yury/cities/ds"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -34,7 +35,8 @@ func scanAlternateNames(
 				city, _ := ds.FindCity(db, nameData[1], false)
 				if city != nil {
 					addCityToIndex(
-						cityNamesBucket, city.Id, nameData[3], nameData[2], city.Population,
+						cityNamesBucket, strconv.Itoa(city.ID), nameData[3],
+						nameData[2], city.Population,
 					)
 
 					cityNamesCount++

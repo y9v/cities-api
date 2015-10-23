@@ -19,10 +19,7 @@ func warmUpSearchCache(db *bolt.DB, c *cache.Cache, locales []string, limit int)
 	jobs := make(chan string, 1000)
 	results := make(chan string, 1000)
 
-	for w := 1; w <= 10; w++ {
-		go worker(jobs, results, db, c, locales, limit)
-	}
-
+	go worker(jobs, results, db, c, locales, limit)
 	jobsCount := 0
 
 	for _, rune := range enRunes {
