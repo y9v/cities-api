@@ -10,7 +10,7 @@ Information about the cities is taken from the [geonames.org dump](http://downlo
 Alternate names are taken for all supported locales (if given in the
 dump), as well as all official names.
 
-This application uses the [gin](https://github.com/gin-gonic/gin) framework, and [Bolt DB](https://github.com/boltdb/bolt).
+This application uses the [Gin](https://github.com/gin-gonic/gin) framework, and [Bolt DB](https://github.com/boltdb/bolt).
 
 ## Configuration
 
@@ -180,3 +180,9 @@ To build and run the docker instance:
 ```
 make dockerrun
 ```
+
+## License
+
+Copyright (c) 2015 Yury Lebedev
+
+This project is released under the [MIT License](http://www.opensource.org/licenses/MIT).
