@@ -105,7 +105,7 @@ func TestCity(t *testing.T) {
 
 					Convey("Returns a city with attributes set", func() {
 						expected, _ := cityFromString(1, cityString)
-						expected.Country, _ = countryFromString("1", countryString)
+						expected.Country, _ = countryFromString(1, countryString)
 						So(city, ShouldResemble, expected)
 					})
 

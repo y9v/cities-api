@@ -7,14 +7,14 @@ import (
 )
 
 type City struct {
-	ID          int      `json:"id"`
+	ID          int      `json:"-"`
 	Name        string   `json:"name"`
-	CountryCode string   `json:"-"`
+	CountryCode string   `json:"country_code"`
 	Population  uint32   `json:"population"`
 	Latitude    float64  `json:"latitude"`
 	Longitude   float64  `json:"longitude"`
 	Timezone    string   `json:"timezone"`
-	Country     *Country `json:"country,omitempty"`
+	Country     *Country `json:"-"`
 }
 
 func cityFromString(id int, cityString string) (*City, error) {

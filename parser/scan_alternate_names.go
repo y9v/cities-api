@@ -22,7 +22,7 @@ func scanAlternateNames(
 	scanner := bufio.NewScanner(reader)
 
 	cityNamesCount := 0
-	countriesTranslations := make(map[string]map[string]string)
+	countriesTranslations := make(map[int]map[string]string)
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		cityNamesBucket := tx.Bucket(ds.CityNamesBucketName)
@@ -43,11 +43,11 @@ func scanAlternateNames(
 				} else if nameData[2] != "en" {
 					country, _ := ds.FindCountry(db, nameData[1])
 					if country != nil {
-						if countriesTranslations[country.Id] == nil {
-							countriesTranslations[country.Id] = make(map[string]string)
+						if countriesTranslations[country.ID] == nil {
+							countriesTranslations[country.ID] = make(map[string]string)
 						}
-						if countriesTranslations[country.Id][nameData[2]] == "" {
-							countriesTranslations[country.Id][nameData[2]] = nameData[3]
+						if countriesTranslations[country.ID][nameData[2]] == "" {
+							countriesTranslations[country.ID][nameData[2]] = nameData[3]
 						}
 					}
 				}

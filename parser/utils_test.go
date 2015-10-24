@@ -51,17 +51,16 @@ func TestUtils(t *testing.T) {
 	Convey("Test add translations to country", t, func() {
 		translations := []string{"de|Deutschland", "ru|Германия"}
 
-		countryId := "1"
 		countryAttrs := []string{"DE", "Germany", "en|Germany"}
 		countryString := strings.Join(countryAttrs, "\t")
-		h.PutToBucket(t, db, ds.CountriesBucketName, countryId, countryString)
+		h.PutToBucket(t, db, ds.CountriesBucketName, "1", countryString)
 
 		err := db.Batch(func(tx *bolt.Tx) error {
 			b := tx.Bucket(ds.CountriesBucketName)
-			return addTranslationsToCountry(b, countryId, translations)
+			return addTranslationsToCountry(b, 1, translations)
 		})
 
-		country, err := ds.FindCountry(db, countryId)
+		country, err := ds.FindCountry(db, "1")
 
 		Convey("Does not modify country data", func() {
 			So(country.Code, ShouldEqual, countryAttrs[0])

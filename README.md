@@ -37,8 +37,8 @@ Returns the application status and basic statistics.
 
 ```json
 {
-  "status": "ok",
-    "statistics": {
+  "meta": {
+    "status": "ok",
     "countries_count": 250,
     "cities_count": 145314,
     "city_names_count": 224695
@@ -64,27 +64,27 @@ Returns a single city by the requested ID parameter.
 
 ```json
 {
-  "id": 3164603,
-  "name": "Venice",
-  "population": 51298,
-  "latitude": 45.43713,
-  "longitude": 12.33265,
-  "timezone": "Europe/Rome",
-  "country": {
-    "code": "IT",
-    "name": "Italy",
-    "translations": {
-      "be": "Італія",
-      "de": "Italien",
-      "en": "Italy",
-      "ru": "Италия",
-      "uk": "Італія"
+  "data": [
+    {
+      "type": "cities",
+      "id": 3164603,
+      "attributes": {
+        "name": "Venice",
+        "country_code": "IT",
+        "population": 51298,
+        "timezone": "Europe/Rome",
+        "latitude": 45.43713,
+        "longitude": 12.33265
+      },
+      "links": {
+        "self": "http://localhost:8082/1.0/cities/3164603"
+      }
     }
-  }
+  ]
 }
 ```
 
-#### GET search/cities
+#### GET cities
 
 Returns 5 matching cities, sorted by population.
 
@@ -96,7 +96,7 @@ country name is added to the city.
 
 **Resourse URL:**
 
-`/1.0/search/cities`
+`/1.0/cities`
 
 **Parameters:**
 
@@ -108,32 +108,48 @@ country name is added to the city.
 
 ```json
 {
-  "cities": [
-    {
-      "id": 3164603,
+  "data": [{
+    "type": "cities",
+    "id": 3164603,
+    "attributes": {
       "name": "Venice",
       "population": 51298,
+      "timezone": "Europe/Rome",
       "latitude": 45.43713,
-      "longitude": 12.33265,
-      "timezone": "Europe/Rome"
+      "longitude": 12.33265
     },
-    {
-      "id": 4176380,
+    "links": {
+      "self": "http://localhost:8082/1.0/cities/3164603"
+    }
+  },
+  {
+    "type": "cities",
+    "id": 4176380,
+    "attributes": {
       "name": "Venice, United States",
       "population": 20748,
+      "timezone": "America/New_York",
       "latitude": 27.09978,
-      "longitude": -82.45426,
-      "timezone": "America/New_York"
+      "longitude": -82.45426
     },
-    {
-      "id": 4176387,
+    "links": {
+      "self": "http://localhost:8082/1.0/cities/4176380"
+    }
+  },
+  {
+    "type": "cities",
+    "id": 4176387,
+    "attributes": {
       "name": "Venice Gardens",
       "population": 7104,
+      "timezone": "America/New_York",
       "latitude": 27.07311,
-      "longitude": -82.4076,
-      "timezone": "America/New_York"
+      "longitude": -82.4076
+    },
+    "links": {
+      "self": "http://localhost:8082/1.0/cities/4176387"
     }
-  ]
+  }]
 }
 ```
 

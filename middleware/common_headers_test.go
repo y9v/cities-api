@@ -20,7 +20,7 @@ func TestCommonHeaders(t *testing.T) {
 
 				Convey("Sets content-type header", func() {
 					actual := headers.Get("Content-Type")
-					So(actual, ShouldEqual, "application/json")
+					So(actual, ShouldEqual, "application/vnd.api+json")
 				})
 
 				Convey("Sets access-control-allow header", func() {

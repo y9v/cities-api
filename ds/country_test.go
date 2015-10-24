@@ -16,10 +16,10 @@ func TestCountry(t *testing.T) {
 
 	Convey("Country from string", t, func() {
 		Convey("When the string is correct", func() {
-			country, err := countryFromString("1", countryString)
+			country, err := countryFromString(1, countryString)
 
 			Convey("Sets the country id from param", func() {
-				So(country.Id, ShouldEqual, "1")
+				So(country.ID, ShouldEqual, 1)
 			})
 
 			Convey("Sets the country attributes", func() {
@@ -38,10 +38,10 @@ func TestCountry(t *testing.T) {
 		})
 
 		Convey("When the string is incorrect", func() {
-			country, err := countryFromString("1", "")
+			country, err := countryFromString(1, "")
 
 			Convey("Leaves the country id blank", func() {
-				So(country.Id, ShouldEqual, "")
+				So(country.ID, ShouldEqual, 0)
 			})
 
 			Convey("Leaves the country attributes blank", func() {
@@ -61,7 +61,7 @@ func TestCountry(t *testing.T) {
 			country, err := FindCountry(db, "1")
 
 			Convey("Returns a country with attributes set", func() {
-				expected, _ := countryFromString("1", countryString)
+				expected, _ := countryFromString(1, countryString)
 				So(country, ShouldResemble, expected)
 			})
 
@@ -102,7 +102,7 @@ func TestCountry(t *testing.T) {
 			country, err := FindCountryByCode(db, countryAttrs[0])
 
 			Convey("Returns a country with attributes set", func() {
-				expected, _ := countryFromString("1", countryString)
+				expected, _ := countryFromString(1, countryString)
 				So(country, ShouldResemble, expected)
 			})
 

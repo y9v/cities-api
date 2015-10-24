@@ -15,7 +15,7 @@ func MakeApplicationStatusEndpoint(db *bolt.DB) func(*gin.Context) {
 	}
 }
 
-func MakeCityEndpoint(db *bolt.DB) func(*gin.Context) {
+func MakeCityEndpoint(db *bolt.DB, options *config.Options) func(*gin.Context) {
 	return func(c *gin.Context) {
 		city, err := ds.FindCity(db, c.Param("id"), true)
 
@@ -24,12 +24,12 @@ func MakeCityEndpoint(db *bolt.DB) func(*gin.Context) {
 		} else if city == nil {
 			c.JSON(404, nil)
 		} else {
-			c.JSON(200, city)
+			c.JSON(200, city.ForSerialization(c.Request.URL, options))
 		}
 	}
 }
 
-func MakeSearchCitiesEndpoint(
+func MakeCitiesEndpoint(
 	db *bolt.DB, options *config.Options, cache *cache.Cache,
 ) func(*gin.Context) {
 	return func(c *gin.Context) {
@@ -43,7 +43,7 @@ func MakeSearchCitiesEndpoint(
 			if err != nil {
 				c.JSON(500, nil)
 			} else {
-				c.JSON(200, cities)
+				c.JSON(200, cities.ForSerialization(c.Request.URL, options))
 			}
 		}
 	}

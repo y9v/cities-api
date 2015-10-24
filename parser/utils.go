@@ -24,11 +24,12 @@ func prepareCountryBytes(countryData []string) ([]byte, error) {
 }
 
 func addTranslationsToCountry(
-	bucket *bolt.Bucket, id string, translations []string,
+	bucket *bolt.Bucket, id int, translations []string,
 ) error {
-	val := bucket.Get([]byte(id))
+	key := strconv.Itoa(id)
+	val := bucket.Get([]byte(key))
 
-	return bucket.Put([]byte(id), []byte(
+	return bucket.Put([]byte(key), []byte(
 		string(val)+";"+strings.Join(translations, ";"),
 	))
 }

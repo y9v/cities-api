@@ -8,7 +8,7 @@ import (
 )
 
 type Cities struct {
-	Cities []*City `json:"cities,omitempty"`
+	Cities []*City
 }
 
 func appendCity(db *bolt.DB, cities []*City, city *City, locale string) []*City {

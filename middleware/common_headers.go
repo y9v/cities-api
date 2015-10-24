@@ -12,7 +12,7 @@ func CommonHeaders(corsOrigins []string) gin.HandlerFunc {
 			}
 		}
 
-		c.Writer.Header().Set("Content-Type", "application/json")
+		c.Writer.Header().Set("Content-Type", "application/vnd.api+json")
 		c.Writer.Header().Set(
 			"Access-Control-Allow-Headers",
 			"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization",

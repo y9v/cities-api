@@ -9,7 +9,7 @@ import (
 func TestAppStatus(t *testing.T) {
 	Convey("Test is indexed", t, func() {
 		Convey("Returns true when status is ok", func() {
-			appStatus := AppStatus{Status: "ok"}
+			appStatus := AppStatus{Statistics: &Statistics{Status: "ok"}}
 			So(appStatus.IsIndexed(), ShouldBeTrue)
 		})
 
@@ -30,7 +30,7 @@ func TestAppStatus(t *testing.T) {
 			appStatus := GetAppStatus(db)
 
 			Convey("Sets app status to \"ok\"", func() {
-				So(appStatus.Status, ShouldEqual, "ok")
+				So(appStatus.Statistics.Status, ShouldEqual, "ok")
 			})
 
 			Convey("Has correct cities count", func() {
@@ -49,7 +49,7 @@ func TestAppStatus(t *testing.T) {
 			appStatus := GetAppStatus(db)
 
 			Convey("Sets the app status to \"indexing\"", func() {
-				So(appStatus.Status, ShouldEqual, "indexing")
+				So(appStatus.Statistics.Status, ShouldEqual, "indexing")
 			})
 
 			Convey("Has 0 for cities count", func() {
