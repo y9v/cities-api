@@ -1,10 +1,6 @@
-dependencies:
-  pre:
-    - go get github.com/mattn/gom
-
 test:
   pre:
-    - go vet ./...
+    - make setup
 
   override:
-    - gom test ./...
+    - make test
