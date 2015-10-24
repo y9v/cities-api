@@ -10,6 +10,8 @@ Information about the cities is taken from the [geonames.org dump](http://downlo
 Alternate names are taken for all supported locales (if given in the
 dump), as well as all official names.
 
+This application uses the [gin](https://github.com/gin-gonic/gin) framework, and [Bolt DB](https://github.com/boltdb/bolt).
+
 ## Configuration
 
 | Option             | Description                          | Default                 |
